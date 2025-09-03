@@ -1,0 +1,96 @@
+/* Hover effect on all nav links */
+.navbar-nav .nav-link {
+  transition: all 0.3s ease-in-out;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #00ff99 !important;   /* custom hover color */
+  transform: scale(1.1);       /* slight zoom */
+}
+
+/* Desktop: underline under text */
+.navbar-nav .nav-link.active {
+  font-weight: bold;
+  border-bottom: 2px solid #00ff99;
+  display: inline-block;
+}
+
+
+
+/* Extra hover styling for active */
+.navbar-nav .nav-link.active:hover {
+  color: #ffcc00 !important;
+}
+
+.navbar-nav .nav-item {
+  margin: 0 12px;  /* adjust px for spacing */
+}
+
+/* Custom dropdown */
+.custom-dropdown {
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 8px 0;
+  background: #1e1e2f; /* dark background */
+  box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.2);
+  animation: dropdownFade 0.25s ease-in-out;
+}
+
+/* Dropdown items */
+.custom-dropdown .dropdown-item {
+  color: #f0f0f0;
+  padding: 10px 18px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.custom-dropdown .dropdown-item:hover {
+  background: linear-gradient(90deg, #00ff99, #00ccff);
+  color: #000 !important;
+  transform: translateX(5px); /* slide effect */
+}
+
+/* Divider */
+.custom-dropdown .dropdown-divider {
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  margin: 6px 0;
+}
+
+/* Smooth fade animation */
+@keyframes dropdownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.cart-icon-wrapper {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+.cart-icon-wrapper:hover {
+  transform: scale(1.15); /* zoom effect */
+  color: #00ff99;        /* change icon color on hover */
+}
+
+/* Badge (cart item count) */
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background: #ff3b3b;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 50%;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
+}
+
