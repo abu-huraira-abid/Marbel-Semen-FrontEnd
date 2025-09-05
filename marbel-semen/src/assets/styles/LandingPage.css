@@ -13,3 +13,64 @@
   }
 }
 
+.image-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.image-container .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* faded shadow */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.image-container:hover .overlay {
+  opacity: 1;
+}
+
+.overlay a {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+}
+
+.image-container:hover .overlay a {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.stay-connected-section {
+  position: relative;
+  background-image: url('https://copilot.microsoft.com/th/id/BCO.e927bcd8-0cf9-47fd-b2c6-61f56e54b2a4.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* parallax effect */
+  height: 400px; /* adjust */
+}
+
+.stay-connected-section .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4); /* dark overlay */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1; /* ensure it's above background */
+}
+
+.stay-connected-section h2 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  z-index: 2;
+}
+
+

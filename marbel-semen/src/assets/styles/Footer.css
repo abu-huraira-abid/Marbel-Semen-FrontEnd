@@ -1,0 +1,42 @@
+
+
+.site-links-section h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #232323;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.site-links li {
+  margin: 12px 0;
+}
+
+.site-links a {
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #2a2929;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+/* underline animation */
+.site-links a::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  left: 0;
+  bottom: -4px;
+  background: #007bff; /* Bootstrap blue */
+  transition: width 0.3s ease;
+}
+
+.site-links a:hover {
+  color: #007bff;
+}
+
+.site-links a:hover::after {
+  width: 100%;
+}
