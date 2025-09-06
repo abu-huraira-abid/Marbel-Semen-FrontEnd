@@ -1,4 +1,8 @@
+import { useNavigate } from "react-router-dom";
+
 export default function SiteLinks() {
+
+  const navigate = useNavigate()
   return (
     <div className="site-links-section py-5">
       <div className="container">
@@ -12,10 +16,10 @@ export default function SiteLinks() {
             <a href="#">The Process</a>
           </li>
           <li>
-            <a href="#">About Us</a>
+            <a href="#" onClick={()=> navigate("/about-us")}>About Us</a>
           </li>
           <li>
-            <a href="#">Contact Us</a>
+            <a href="#" onClick={()=> navigate("/contact-us")}>Contact Us</a>
           </li>
         </ul>
       </div>
