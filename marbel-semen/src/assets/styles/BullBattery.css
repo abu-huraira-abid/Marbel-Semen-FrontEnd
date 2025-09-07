@@ -1,0 +1,90 @@
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-size: 100% 100%;
+  filter: invert(1) grayscale(100); /* turns white icons into black */
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  width: auto;               /* shrink default full height area */
+  top: 50%;                  /* vertically center */
+  transform: translateY(-50%);
+}
+
+.carousel-control-prev {
+  left: -60px;  /* push to the left outside the cards */
+}
+
+.carousel-control-next {
+  right: -60px; /* push to the right outside the cards */
+}
+
+
+.bull-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.bull-card .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease;
+}
+
+.bull-card:hover .overlay {
+  opacity: 1;
+}
+
+/* Option 2 button: white border + transparent */
+.overlay-btn {
+  background: transparent;
+  border: 2px solid #fff;
+  color: #fff;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.overlay-btn:hover {
+  background: #fff;
+  color: #000;
+}
+
+
+.card.translate-card {
+  transition: transform 0.3s, box-shadow 0.3s;
+  border-radius: 8px;
+}
+
+.card.translate-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.card-img-left {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.btn {
+  transition: transform 0.2s;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+}
+
+.table td, .table th {
+  white-space: normal !important;
+}
+
+
