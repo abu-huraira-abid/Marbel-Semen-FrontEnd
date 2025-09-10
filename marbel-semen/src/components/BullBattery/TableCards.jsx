@@ -144,7 +144,7 @@ export default function TableCards() {
                       <i className="bi bi-bar-chart-line me-1"></i> View Stats
                     </button>
                     <button className="btn btn-success btn-sm flex-fill rounded-1">
-                      <i className="bi bi-cart-plus me-1"></i> Add to Cart
+                      <i className="bi bi-cart-plus me-1" onClick={()=> navigate('/add-cart',{state:{id:bull.id}})}></i> Add to Cart
                     </button>
                   </div>
                 </div>

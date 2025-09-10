@@ -1,6 +1,9 @@
+import { useNavigate } from "react-router-dom";
 
 export default function BullCard({id})
 {
+
+  const navigate = useNavigate()
 
   const bulls = [
   {
@@ -116,7 +119,7 @@ const prices = [
                          <div className="my-2 fs-5 text-danger">
                             REG # WYNFR308H
                         </div>
-                        <button className="btn btn-success btn-lg flex-fill rounded-1 my-2 w-50" onClick={()=> Navigate("/add-cart")}>
+                        <button className="btn btn-success btn-lg flex-fill rounded-1 my-2 w-50" onClick={()=> navigate("/add-cart",{state:{id : id}})}>
                       <i className="bi bi-cart-plus me-1"></i> Add to Cart
                     </button>
                     </div>

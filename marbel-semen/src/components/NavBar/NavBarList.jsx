@@ -104,6 +104,16 @@ export default function NavBarList() {
                 <li>
                   <a
                     className={`dropdown-item ${
+                      active === "Bull Compare" ? "active" : ""
+                    }`}
+                    onClick={() => handleClick("Bull Compare", "/bull-compare")}
+                  >
+                    Bull Compare
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className={`dropdown-item ${
                       active === "Commerical Bulls" ? "active" : ""
                     }`}
                     onClick={() =>
