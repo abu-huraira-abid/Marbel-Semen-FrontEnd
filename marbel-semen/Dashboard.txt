@@ -1,0 +1,79 @@
+Dashboard (Home)
+
+KPIs at a glance:
+
+Total Bulls
+
+Active Semen Straws
+
+Monthly Sales
+
+Low Stock Alerts
+
+Quick links (Add Bull, Add Semen Batch, Generate Report).
+
+Bulls Management
+
+Bull listing (name, breed, image, indexes, availability).
+
+Bull detail page: full stats (Growth, Essential, Carcass, Indexes), pedigree info, semen batches linked.
+
+Add/Edit Bull form.
+
+Semen Batches
+
+Inventory of semen straws.
+
+Batch number, bull ID, production date, expiry, available stock.
+
+Alerts for batches nearing expiry.
+
+Orders & Sales
+
+Customer orders: pending, completed, canceled.
+
+Order detail (bull → semen batch → qty → price).
+
+Downloadable invoices.
+
+Customers / Owners
+
+Customer directory (breeders, farmers).
+
+Purchase history per customer.
+
+Breeding programs linked to their orders.
+
+Reports & Analytics
+
+Sales trends (per bull, per breed, per time range).
+
+Stock movement report.
+
+Performance comparison: growth stats, carcass stats across breeds.
+
+Export to PDF/Excel.
+
+Cart & Checkout (if self-service is planned)
+
+Add semen straws from Bull Detail.
+
+Quantity input, price tiers auto-update.
+
+Checkout summary and payment (if online purchase is part of scope).
+
+Notifications & Alerts
+
+Low semen stock alerts.
+
+Bulls with abnormal stats.
+
+New orders placed.
+
+Settings / Admin
+
+Manage users (admin, staff, etc.).
+
+Role-based access.
+
+System preferences (currency, regions, breeds).

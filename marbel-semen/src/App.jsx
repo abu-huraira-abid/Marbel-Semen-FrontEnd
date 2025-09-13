@@ -6,6 +6,9 @@ import BullBattery from "./components/BullBattery/BullBattery";
 import ViewStat from "./components/ViewStat/ViewStat";
 import BullCompare from "./components/BullCompare/BullCompare";
 import AddToCart from "./components/AddToCart/AddToCart";
+import Account from "./components/Register/Account";
+import Dashboard from "./components/DashboardUI/Dashboard/Dashboard";
+import BullsManagement from "./components/DashboardUI/BullManagement/BullsManagement";
 
 export default function App() {
   return (
@@ -18,6 +21,9 @@ export default function App() {
         <Route path="/view-stat" element={<ViewStat />} />
         <Route path="/bull-compare" element={<BullCompare />} />
         <Route path="/add-cart" element={<AddToCart />} />
+        <Route path="/account" element={<Account />} />
+        <Route path="/account/dashboard" element={<Dashboard />} />
+        <Route path="/account/bulls" element={<BullsManagement />} />
       </Routes>
     </Router>
   );

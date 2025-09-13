@@ -1,0 +1,67 @@
+.nav-link:hover {
+  background-color: #495057 !important; /* dark gray */
+  color: #fff !important;
+}
+
+.fixed-height {
+  min-height: 220px !important;
+}
+
+.quick-link-card {
+  transition: transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
+  cursor: pointer;
+}
+
+.quick-link-card:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Sidebar default */
+.sidebar {
+  width: 250px;
+  min-height: 100vh;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Desktop: sidebar always visible on right */
+/* Sidebar default */
+.sidebar {
+  width: 250px;
+  min-height: 100vh;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Sidebar default */
+.sidebar {
+  width: 250px;
+  min-height: 100vh;
+  transition: transform 0.3s ease-in-out;
+  background: #212529; /* Bootstrap dark */
+}
+
+/* Desktop: sidebar always visible on left */
+@media (min-width: 992px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    transform: translateX(0); /* always visible */
+  }
+}
+
+/* Mobile/tablet: sidebar hidden by default, slides from left */
+@media (max-width: 991px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1050;
+    height: 100%;
+    transform: translateX(-100%); /* fully hidden */
+  }
+  .sidebar.open {
+    transform: translateX(0); /* slide into view */
+  }
+}
