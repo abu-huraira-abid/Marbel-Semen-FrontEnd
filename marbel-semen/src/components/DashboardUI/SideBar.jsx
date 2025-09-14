@@ -7,13 +7,42 @@ import {
   FaChartBar,
   FaCog,
   FaBars,
+  FaSignOutAlt,
 } from "react-icons/fa";
-import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import "../../assets/styles/Dashboard.css";
+import RefreshTokenApi from "../Register/utils/RefreshToken"; // ✅ import your refresh api
 
 export default function SideBar() {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+
+  // 🔹 Auto refresh token on mount
+  useEffect(() => {
+    async function ensureToken() {
+      try {
+        await RefreshTokenApi(); // refresh token if needed
+      } catch (err) {
+        console.error("Token refresh failed", err);
+        localStorage.clear();
+        navigate("/account"); 
+      }
+    }
+
+    ensureToken();
+
+    // Optional: refresh token every 5 minutes
+    const interval = setInterval(ensureToken, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token"); // ✅ also clear refresh token
+    navigate("/login");
+  };
 
   const menuItems = [
     { name: "Dashboard", icon: <FaHome />, path: "/account/dashboard" },
@@ -74,6 +103,16 @@ export default function SideBar() {
             </li>
           ))}
         </ul>
+
+        {/* Logout Button at Bottom */}
+        <div className="mt-auto text-center mx-auto mb-5 mb-lg-4">
+          <button
+            className="btn btn-danger px-5 rounded-1 d-flex align-items-center justify-content-center"
+            onClick={handleLogout}
+          >
+            <FaSignOutAlt className="me-2" /> Logout
+          </button>
+        </div>
       </div>
     </>
   );

@@ -1,8 +1,37 @@
 import { useState } from "react";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import LoginApi from "./utils/LoginApi"; 
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  // Handle input changes
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Handle form submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const res = await LoginApi(formData);
+
+    if (res.success) {
+      toast.success("Login successful!", { position: "top-right" });
+      setTimeout(() => navigate("/account/dashboard"), 1500); redirect
+    } else {
+      toast.error(res.message || "Login failed!", { position: "top" });
+    }
+
+    setLoading(false);
+  };
 
   return (
     <div className="d-flex justify-content-center align-items-center my-2 my-lg-0">
@@ -10,22 +39,25 @@ export default function Login() {
         <h1 className="my-2 text-center" style={{ fontFamily: "Syne" }}>
           My Account
         </h1>
-        <form action="">
-          {/* Username Field */}
+        <form onSubmit={handleSubmit}>
+          {/* Username/Email Field */}
           <div className="my-3">
-            <label htmlFor="username" className="form-label">
-              Username:
+            <label htmlFor="email" className="form-label">
+              Username/Email:
             </label>
             <input
               type="text"
-              name="username"
-              id="username"
+              name="email"
+              id="email"
               className="form-control rounded-0 py-3"
               placeholder="Enter username or email"
+              value={formData.email}
+              onChange={handleChange}
+              required
             />
           </div>
 
-          {/* Password Field with Eye Icon */}
+          {/* Password Field */}
           <div className="my-3">
             <label htmlFor="password" className="form-label">
               Password:
@@ -37,6 +69,9 @@ export default function Login() {
                 id="password"
                 className="form-control rounded-0 py-3 pe-5"
                 placeholder="Enter Password"
+                value={formData.password}
+                onChange={handleChange}
+                required
               />
               <button
                 type="button"
@@ -66,12 +101,19 @@ export default function Login() {
 
           {/* Login Button */}
           <div className="text-center">
-            <button className="btn btn-lg btn-primary my-3 rounded-0 px-5">
-              Login
+            <button
+              type="submit"
+              className="btn btn-lg btn-primary my-3 rounded-0 px-5"
+              disabled={loading}
+            >
+              {loading ? "Logging in..." : "Login"}
             </button>
           </div>
         </form>
       </div>
+
+      {/* Toast Container */}
+      <ToastContainer />
     </div>
   );
 }

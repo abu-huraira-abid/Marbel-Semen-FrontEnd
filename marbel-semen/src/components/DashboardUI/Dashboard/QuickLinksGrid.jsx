@@ -1,7 +1,9 @@
 // src/components/DashboardUI/QuickLinksGrid.jsx
+import { useNavigate } from "react-router-dom";
 import { FaPlusCircle, FaFlask, FaChartBar, FaShoppingCart } from "react-icons/fa";
 
 export default function QuickLinksGrid() {
+  const navigate = useNavigate()
   return (
     <div className="bg-light border-0 my-5">
       <div className="card-body">
@@ -11,7 +13,7 @@ export default function QuickLinksGrid() {
           {/* Add Bull */}
           <div className="col-6 col-md-3">
             <div className="card quick-link-card text-center shadow-lg bg-primary text-white border-0 h-100">
-              <div className="card-body d-flex flex-column align-items-center justify-content-center">
+              <div className="card-body d-flex flex-column align-items-center justify-content-center" onClick={()=> navigate("/account/bulls")}>
                 <FaPlusCircle size={40} className="text-white mb-2" />
                 <h6 className="fw-semibold">Add Bull</h6>
               </div>

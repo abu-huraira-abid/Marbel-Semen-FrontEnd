@@ -9,6 +9,8 @@ import AddToCart from "./components/AddToCart/AddToCart";
 import Account from "./components/Register/Account";
 import Dashboard from "./components/DashboardUI/Dashboard/Dashboard";
 import BullsManagement from "./components/DashboardUI/BullManagement/BullsManagement";
+import BullView from "./components/DashboardUI/BullManagement/BullView";
+import OrderManagement from "./components/DashboardUI/OrderManagement/OrderManagement";
 
 export default function App() {
   return (
@@ -24,6 +26,8 @@ export default function App() {
         <Route path="/account" element={<Account />} />
         <Route path="/account/dashboard" element={<Dashboard />} />
         <Route path="/account/bulls" element={<BullsManagement />} />
+        <Route path="/account/bulls/:id" element={<BullView />} />
+        <Route path="/account/orders" element={<OrderManagement />} />
       </Routes>
     </Router>
   );

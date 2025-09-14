@@ -215,11 +215,14 @@ export default function NavBarList() {
           </ul>
 
           {/* Cart Icon */}
-          <div className="cart-icon-wrapper text-center mx-lg-3">
-            <i class="bi bi-person-circle fs-3"></i>
+          <div
+            className="cart-icon-wrapper text-center mx-lg-3"
+            onClick={() => navigate("/account")}
+          >
+            <i className="bi bi-person-circle fs-3"></i>
           </div>
           <div className="cart-icon-wrapper text-center mx-lg-3">
-            <i class="bi bi-cart-check fs-3" onClick={navigate("/account")}></i>
+            <i className="bi bi-cart-check fs-3"></i>
           </div>
         </div>
       </div>

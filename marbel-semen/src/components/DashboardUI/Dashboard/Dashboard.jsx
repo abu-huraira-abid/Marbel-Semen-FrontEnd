@@ -12,9 +12,9 @@ export default function Dashboard() {
         <div className="col-lg-3">
           <SideBar />
         </div>
-        <div className="container col-9 py-4">
+        <div className="container col-12 col-lg-9 p-4 p-lg-0 py-lg-4">
           <div className="row">
-            <h1 className="my-3 mb-5 fw-bold" style={{ fontFamily: "Syne" }}>
+            <h1 className="my-3 mb-5 fw-bold text-center text-lg-start" style={{ fontFamily: "Syne" }}>
               DASHBOARD
             </h1>
             <div className="col-12 col-md-6 col-lg-3 my-2 my-lg-0">
