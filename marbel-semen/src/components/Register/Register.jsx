@@ -1,9 +1,61 @@
 import { useState } from "react";
+import axios from "axios";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    // Password confirmation check
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        import.meta.env.VITE_REGISTER,
+        {
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      setSuccess("Registration successful!");
+      setFormData({ username: "", email: "", password: "", confirmPassword: "" });
+    } catch (err) {
+      if (err.response && err.response.data) {
+        // Handles DRF error format
+        const detail = err.response.data.detail || JSON.stringify(err.response.data);
+        setError(detail);
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
+    }
+  };
 
   return (
     <div className="d-flex justify-content-center align-items-center">
@@ -11,40 +63,44 @@ export default function Register() {
         <h1 className="my-2 text-center" style={{ fontFamily: "Syne" }}>
           Register Account
         </h1>
-        <form action="">
-          {/* Username Field */}
+
+        {error && <div className="alert alert-danger">{error}</div>}
+        {success && <div className="alert alert-success">{success}</div>}
+
+        <form onSubmit={handleSubmit}>
+          {/* Username */}
           <div className="my-3">
-            <label htmlFor="username" className="form-label">
-              Username:
-            </label>
+            <label htmlFor="username" className="form-label">Username:</label>
             <input
               type="text"
               name="username"
               id="username"
               className="form-control rounded-0 py-3"
               placeholder="Enter username"
+              value={formData.username}
+              onChange={handleChange}
+              required
             />
           </div>
 
-          {/* Email Field */}
+          {/* Email */}
           <div className="my-3">
-            <label htmlFor="email" className="form-label">
-              Email:
-            </label>
+            <label htmlFor="email" className="form-label">Email:</label>
             <input
               type="email"
               name="email"
               id="email"
               className="form-control rounded-0 py-3"
               placeholder="Enter email"
+              value={formData.email}
+              onChange={handleChange}
+              required
             />
           </div>
 
-          {/* Password Field */}
+          {/* Password */}
           <div className="my-3">
-            <label htmlFor="password" className="form-label">
-              Password:
-            </label>
+            <label htmlFor="password" className="form-label">Password:</label>
             <div className="position-relative">
               <input
                 type={showPassword ? "text" : "password"}
@@ -52,6 +108,9 @@ export default function Register() {
                 id="password"
                 className="form-control rounded-0 py-3 pe-5"
                 placeholder="Enter password"
+                value={formData.password}
+                onChange={handleChange}
+                required
               />
               <button
                 type="button"
@@ -59,20 +118,14 @@ export default function Register() {
                 style={{ top: "50%", right: "10px", transform: "translateY(-50%)" }}
                 onClick={() => setShowPassword(!showPassword)}
               >
-                <i
-                  className={`fas ${
-                    showPassword ? "fa-eye-slash" : "fa-eye"
-                  } fa-lg text-secondary`}
-                ></i>
+                <i className={`fas ${showPassword ? "fa-eye-slash" : "fa-eye"} fa-lg text-secondary`}></i>
               </button>
             </div>
           </div>
 
-          {/* Confirm Password Field */}
+          {/* Confirm Password */}
           <div className="my-3">
-            <label htmlFor="confirmPassword" className="form-label">
-              Confirm Password:
-            </label>
+            <label htmlFor="confirmPassword" className="form-label">Confirm Password:</label>
             <div className="position-relative">
               <input
                 type={showConfirmPassword ? "text" : "password"}
@@ -80,6 +133,9 @@ export default function Register() {
                 id="confirmPassword"
                 className="form-control rounded-0 py-3 pe-5"
                 placeholder="Confirm password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
               />
               <button
                 type="button"
@@ -87,18 +143,14 @@ export default function Register() {
                 style={{ top: "50%", right: "10px", transform: "translateY(-50%)" }}
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               >
-                <i
-                  className={`fas ${
-                    showConfirmPassword ? "fa-eye-slash" : "fa-eye"
-                  } fa-lg text-secondary`}
-                ></i>
+                <i className={`fas ${showConfirmPassword ? "fa-eye-slash" : "fa-eye"} fa-lg text-secondary`}></i>
               </button>
             </div>
           </div>
 
           {/* Register Button */}
           <div className="text-center">
-            <button className="btn btn-lg btn-outline-primary my-3 rounded-0 px-5">
+            <button type="submit" className="btn btn-lg btn-outline-primary my-3 rounded-0 px-5">
               Register
             </button>
           </div>

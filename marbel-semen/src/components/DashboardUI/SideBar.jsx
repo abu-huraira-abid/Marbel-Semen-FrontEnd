@@ -9,47 +9,56 @@ import {
   FaBars,
   FaSignOutAlt,
 } from "react-icons/fa";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import "../../assets/styles/Dashboard.css";
-import RefreshTokenApi from "../Register/utils/RefreshToken"; // ✅ import your refresh api
+import API from "../Register/utils/Api"; 
 
 export default function SideBar() {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
-  // 🔹 Auto refresh token on mount
-  useEffect(() => {
-    async function ensureToken() {
-      try {
-        await RefreshTokenApi(); // refresh token if needed
-      } catch (err) {
-        console.error("Token refresh failed", err);
-        localStorage.clear();
-        navigate("/account"); 
-      }
+  const handleLogout = async () => {
+  try {
+    const LOGOUT_URL = import.meta.env.VITE_LOGOUT;
+    const refresh = localStorage.getItem("refresh_token");
+    const access = localStorage.getItem("access_token");
+
+    if (refresh && access) {
+      await API.post(
+        LOGOUT_URL,
+        { refresh:refresh },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${access}`, // ✅ Add access token
+          },
+        }
+      );
     }
-
-    ensureToken();
-
-    // Optional: refresh token every 5 minutes
-    const interval = setInterval(ensureToken, 5 * 60 * 1000);
-
-    return () => clearInterval(interval);
-  }, [navigate]);
-
-  const handleLogout = () => {
+  } catch (error) {
+    console.error("Logout API error:", error.response?.data || error.message);
+  } finally {
+    // Always clear storage
     localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token"); // ✅ also clear refresh token
-    navigate("/login");
-  };
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("userEmail");
+
+    navigate("/account");
+  }
+};
+
 
   const menuItems = [
     { name: "Dashboard", icon: <FaHome />, path: "/account/dashboard" },
-    { name: "Bulls", icon: <FaBullhorn />, path: "/account/bulls" },
-    { name: "Semen Batches", icon: <FaFlask />, path: "/account/semen-batches" },
-    { name: "Orders", icon: <FaShoppingCart />, path: "/account/orders" },
-    { name: "Customers", icon: <FaUsers />, path: "/account/customers" },
+    { name: "Bull Management", icon: <FaBullhorn />, path: "/account/bulls" },
+    {
+      name: "Semen Batches",
+      icon: <FaFlask />,
+      path: "/account/semen-batches",
+    },
+    { name: "Order Management", icon: <FaShoppingCart />, path: "/account/orders" },
+    { name: "User Management", icon: <FaUsers />, path: "/account/users" },
     { name: "Reports", icon: <FaChartBar />, path: "/account/reports" },
     { name: "Settings", icon: <FaCog />, path: "/account/settings" },
   ];

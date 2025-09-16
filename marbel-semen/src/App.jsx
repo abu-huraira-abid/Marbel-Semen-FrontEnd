@@ -11,6 +11,8 @@ import Dashboard from "./components/DashboardUI/Dashboard/Dashboard";
 import BullsManagement from "./components/DashboardUI/BullManagement/BullsManagement";
 import BullView from "./components/DashboardUI/BullManagement/BullView";
 import OrderManagement from "./components/DashboardUI/OrderManagement/OrderManagement";
+import Users from "./components/DashboardUI/Users/UsersManagement";
+import UsersManagement from "./components/DashboardUI/Users/UsersManagement";
 
 export default function App() {
   return (
@@ -28,6 +30,7 @@ export default function App() {
         <Route path="/account/bulls" element={<BullsManagement />} />
         <Route path="/account/bulls/:id" element={<BullView />} />
         <Route path="/account/orders" element={<OrderManagement />} />
+        <Route path="/account/users" element={<UsersManagement />} />
       </Routes>
     </Router>
   );

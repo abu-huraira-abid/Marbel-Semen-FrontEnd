@@ -11,14 +11,29 @@ export default async function RefreshTokenApi() {
       throw new Error("No refresh token found");
     }
 
-    const response = await axios.post(REFRESH_URL, { refresh });
+    const response = await axios.post(
+      REFRESH_URL,
+      { refresh : refresh },
+      { headers: { "Content-Type": "application/json" } }
+    );
 
-    // Save new access token
+    // Save new tokens
     localStorage.setItem("access_token", response.data.access);
 
-    return response.data; // { access: "...new token..." }
+    if (response.data.refresh) {
+      // ⚡ important when ROTATE_REFRESH_TOKENS=True
+      localStorage.setItem("refresh_token", response.data.refresh);
+    }
+
+    return response.data;
   } catch (error) {
-    // Normalize error
+    console.error("Refresh token error:", error.response?.data || error.message);
+
+    // If refresh fails → logout user
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("userEmail");
+
     throw error.response?.data || { detail: error.message };
   }
 }

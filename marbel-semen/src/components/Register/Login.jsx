@@ -25,7 +25,7 @@ export default function Login() {
 
     if (res.success) {
       toast.success("Login successful!", { position: "top-right" });
-      setTimeout(() => navigate("/account/dashboard"), 1500); redirect
+      setTimeout(() => navigate("/account/dashboard"), 1500)
     } else {
       toast.error(res.message || "Login failed!", { position: "top" });
     }

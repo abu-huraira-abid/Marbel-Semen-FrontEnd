@@ -8,8 +8,8 @@ export default async function LoginApi(data) {
     });
 
     // Save tokens & email in localStorage
-    localStorage.setItem("access", response.data.access);
-    localStorage.setItem("refresh", response.data.refresh);
+    localStorage.setItem("access_token", response.data.access);
+    localStorage.setItem("refresh_token", response.data.refresh);
     localStorage.setItem("userEmail", data.email);
 
     return { success: true, data: response.data };
