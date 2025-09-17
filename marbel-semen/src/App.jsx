@@ -1,4 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import LandingPage from "../src/components/LandingPage/LandingPage";
 import AboutUs from "./components/AboutUs/AboutUs";
 import ContactUs from "./components/ContactUs/ContactUs";
@@ -11,7 +14,6 @@ import Dashboard from "./components/DashboardUI/Dashboard/Dashboard";
 import BullsManagement from "./components/DashboardUI/BullManagement/BullsManagement";
 import BullView from "./components/DashboardUI/BullManagement/BullView";
 import OrderManagement from "./components/DashboardUI/OrderManagement/OrderManagement";
-import Users from "./components/DashboardUI/Users/UsersManagement";
 import UsersManagement from "./components/DashboardUI/Users/UsersManagement";
 
 export default function App() {
@@ -32,6 +34,20 @@ export default function App() {
         <Route path="/account/orders" element={<OrderManagement />} />
         <Route path="/account/users" element={<UsersManagement />} />
       </Routes>
+
+      {/* 🔥 Toast container must be mounted once */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </Router>
   );
 }

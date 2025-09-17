@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaTimes, FaSave } from "react-icons/fa";
 import axios from "axios";
 import { toast } from "react-toastify"; // ✅ import toast
+import API from "../../Register/utils/Api";
 
 export default function UserModal({ show, handleClose }) {
   const [formData, setFormData] = useState({
@@ -29,7 +30,7 @@ export default function UserModal({ show, handleClose }) {
     setLoading(true);
 
     try {
-      const response = await axios.post(
+      const response = await API.post(
         `${import.meta.env.VITE_BASE_URL}/accounts/register/`,
         formData,
         {
@@ -55,7 +56,7 @@ export default function UserModal({ show, handleClose }) {
 
       toast.error(
         error.response?.data?.detail ||
-          "❌ Failed to create user. Please try again."
+          "Failed to create user. Please try again."
       );
     } finally {
       setLoading(false);
