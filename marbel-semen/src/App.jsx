@@ -15,6 +15,7 @@ import BullsManagement from "./components/DashboardUI/BullManagement/BullsManage
 import BullView from "./components/DashboardUI/BullManagement/BullView";
 import OrderManagement from "./components/DashboardUI/OrderManagement/OrderManagement";
 import UsersManagement from "./components/DashboardUI/Users/UsersManagement";
+import Setting from "./components/DashboardUI/Setting/Setting";
 
 export default function App() {
   return (
@@ -33,6 +34,7 @@ export default function App() {
         <Route path="/account/bulls/:id" element={<BullView />} />
         <Route path="/account/orders" element={<OrderManagement />} />
         <Route path="/account/users" element={<UsersManagement />} />
+        <Route path="/account/settings" element={<Setting />} />
       </Routes>
 
       {/* 🔥 Toast container must be mounted once */}

@@ -1,84 +1,152 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { FaTimes, FaSave } from "react-icons/fa";
-import initialBulls from "./Data";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function BullData() {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
+  // Fetch bull details
   useEffect(() => {
-    const bull = initialBulls.find((b) => b.id === parseInt(id, 10));
-    if (bull) {
-      // ensure pricePackages exists and is an array
-      setFormData({
-        ...bull,
-        pricePackages: Array.isArray(bull.pricePackages) ? bull.pricePackages : [],
-      });
-    } else {
-      setFormData(null);
-    }
+    const fetchBull = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+        const response = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/bulls/bulls/${id}/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.data.success) {
+          const bull = response.data.data;
+          console.log("Bull details:", bull);
+          setFormData({
+            ...bull,
+            price_packages: Array.isArray(bull.price_packages)
+              ? bull.price_packages
+              : [],
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching bull:", error);
+        setFormData(null);
+        toast.error("Failed to load bull details.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBull();
   }, [id]);
 
+  // Handle simple field changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = (e) => {
+  // Handle save
+  const handleSave = async (e) => {
     e.preventDefault();
 
-    // Basic validation for packages (optional)
-    const pkgs = formData.pricePackages ?? [];
-    for (let i = 0; i < pkgs.length; i++) {
-      const p = pkgs[i];
-      if (p.min === "" || p.max === "" || p.price === "") {
-        alert("Please fill min/max/price for all packages or remove empty packages.");
-        return;
+    const token = localStorage.getItem("access_token");
+    const formPayload = new FormData();
+
+    // Append all fields except image file and price_packages
+    const fieldsToSend = [
+      "name",
+      "breed",
+      "registration_id",
+      "status",
+      "age",
+      "weight",
+      "semen_straws",
+      "health_status",
+    ];
+
+    fieldsToSend.forEach((field) => {
+      if (formData[field] !== undefined) {
+        formPayload.append(field, formData[field]);
       }
-      if (Number(p.min) > Number(p.max)) {
-        alert("Package min must be <= max.");
-        return;
-      }
+    });
+
+    // Append price_packages as JSON string
+    formPayload.append(
+      "price_packages",
+      JSON.stringify(formData.price_packages ?? [])
+    );
+
+    // Append new image if exists
+    if (formData.new_image) {
+      formPayload.append("image", formData.new_image);
     }
 
-    // For now we only log the updated object (backend will handle persisting)
-    console.log("Updated bull:", formData);
+    try {
+      const response = await axios.patch(
+        `${import.meta.env.VITE_BASE_URL}/bulls/bulls/${id}/`,
+        formPayload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-    // TODO: call API to save updated bull here.
+      if (response.data.success) {
+        toast.success("Bull updated successfully!");
+        console.log("Bull updated:", response.data.data);
 
-    navigate("/account/bulls");
+        // Wait 1.5 seconds before navigating
+        setTimeout(() => {
+          navigate("/account/bulls");
+        }, 1500);
+      }
+    } catch (error) {
+      console.error("Error updating bull:", error);
+      toast.error("Failed to update bull.");
+    }
   };
 
-  // --- PACKAGE HANDLERS (safe, use prev state) ---
+  // Package handlers
   const addPackage = () =>
-    setFormData((prev) => {
-      const current = prev ?? { pricePackages: [] };
-      const updated = [...(current.pricePackages ?? []), { min: "", max: "", price: "" }];
-      return { ...current, pricePackages: updated };
-    });
+    setFormData((prev) => ({
+      ...prev,
+      price_packages: [
+        ...(prev.price_packages ?? []),
+        { min: "", max: "", price: "" },
+      ],
+    }));
 
   const updatePackage = (index, field, value) =>
     setFormData((prev) => {
-      const current = prev ?? { pricePackages: [] };
-      const pkgs = Array.isArray(current.pricePackages) ? [...current.pricePackages] : [];
+      const pkgs = [...(prev.price_packages ?? [])];
       pkgs[index] = { ...pkgs[index], [field]: value };
-      return { ...current, pricePackages: pkgs };
+      return { ...prev, price_packages: pkgs };
     });
 
   const removePackage = (index) =>
-    setFormData((prev) => {
-      const current = prev ?? { pricePackages: [] };
-      const pkgs = (current.pricePackages ?? []).filter((_, i) => i !== index);
-      return { ...current, pricePackages: pkgs };
-    });
+    setFormData((prev) => ({
+      ...prev,
+      price_packages: (prev.price_packages ?? []).filter((_, i) => i !== index),
+    }));
 
+  if (loading)
+    return <p className="text-center py-5">Loading bull details...</p>;
   if (!formData) return <p className="text-center py-5">Bull not found</p>;
 
   return (
     <div className="container py-4">
+      <ToastContainer position="top-right" autoClose={3000} />
       <h1 className="fw-bold mb-4" style={{ fontFamily: "Syne" }}>
         BULL DETAILS
       </h1>
@@ -92,7 +160,7 @@ export default function BullData() {
               type="text"
               className="form-control rounded-0"
               name="name"
-              value={formData.name}
+              value={formData.name ?? ""}
               onChange={handleChange}
             />
           </div>
@@ -102,7 +170,7 @@ export default function BullData() {
               type="text"
               className="form-control rounded-0"
               name="breed"
-              value={formData.breed}
+              value={formData.breed ?? ""}
               onChange={handleChange}
             />
           </div>
@@ -115,21 +183,23 @@ export default function BullData() {
             <input
               type="text"
               className="form-control rounded-0"
-              name="reg"
-              value={formData.reg}
+              name="registration_id"
+              value={formData.registration_id ?? ""}
               onChange={handleChange}
             />
           </div>
           <div className="col-md-6">
             <label className="form-label">Status</label>
             <select
-              className="form-select rounded-0"
               name="status"
-              value={formData.status}
+              className="form-select"
+              value={formData.status ?? ""}
               onChange={handleChange}
             >
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
+              <option value="available">Available</option>
+              <option value="unavailable">Unavailable</option>
+              <option value="sold">Sold</option>
+              <option value="retired">Retired</option>
             </select>
           </div>
         </div>
@@ -161,34 +231,36 @@ export default function BullData() {
             <input
               type="number"
               className="form-control rounded-0"
-              name="semenStraws"
-              value={formData.semenStraws ?? ""}
+              name="semen_straws"
+              value={formData.semen_straws ?? ""}
               onChange={handleChange}
             />
           </div>
         </div>
 
-        {/* Health Status & Notes */}
+        {/* Health Status */}
         <div className="mb-3">
           <label className="form-label">Health Status</label>
           <input
             type="text"
             className="form-control rounded-0"
-            name="healthStatus"
-            value={formData.healthStatus ?? ""}
+            name="health_status"
+            value={formData.health_status ?? ""}
             onChange={handleChange}
           />
         </div>
 
-        {/* Price Packages (dynamic) */}
+        {/* Price Packages */}
         <div className="mb-4">
           <label className="form-label fw-bold">Price Packages</label>
 
-          {(formData.pricePackages ?? []).length === 0 && (
-            <div className="text-muted mb-2">No packages yet. Add one below.</div>
+          {(formData.price_packages ?? []).length === 0 && (
+            <div className="text-muted mb-2">
+              No packages yet. Add one below.
+            </div>
           )}
 
-          {(formData.pricePackages ?? []).map((pkg, idx) => (
+          {(formData.price_packages ?? []).map((pkg, idx) => (
             <div key={idx} className="d-flex align-items-center gap-2 mb-2">
               <input
                 type="number"
@@ -202,7 +274,7 @@ export default function BullData() {
                 type="number"
                 min="0"
                 className="form-control rounded-0"
-                placeholder="Max Qty (optional)"
+                placeholder="Max Qty"
                 value={pkg.max ?? ""}
                 onChange={(e) => updatePackage(idx, "max", e.target.value)}
               />
@@ -232,31 +304,23 @@ export default function BullData() {
             + Add Package
           </button>
         </div>
-        
-        <div className="mb-3">
-          <label className="form-label">Notes</label>
-          <textarea
-            className="form-control rounded-0"
-            name="notes"
-            rows="3"
-            value={formData.notes ?? ""}
-            onChange={handleChange}
-          ></textarea>
-        </div>
 
-        {/* Image */}
+        {/* Image Upload */}
         <div className="mb-3">
-          <label className="form-label">Image URL</label>
+          <label className="form-label">Image</label>
           <input
-            type="text"
-            className="form-control rounded-0"
-            name="image"
-            value={formData.image ?? ""}
-            onChange={handleChange}
+            type="file"
+            className="form-control"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              if (file) setFormData((prev) => ({ ...prev, new_image: file }));
+            }}
           />
         </div>
 
-        {formData.image && (
+        {/* Current image preview */}
+        {formData.image && !formData.new_image && (
           <div className="mb-3">
             <img
               src={formData.image}
@@ -267,6 +331,17 @@ export default function BullData() {
           </div>
         )}
 
+        {/* New image preview */}
+        {formData.new_image && (
+          <div className="mb-3">
+            <img
+              src={URL.createObjectURL(formData.new_image)}
+              alt="New Bull"
+              className="img-thumbnail"
+              style={{ maxWidth: "200px" }}
+            />
+          </div>
+        )}
 
         {/* Buttons */}
         <div className="d-flex justify-content-end">
