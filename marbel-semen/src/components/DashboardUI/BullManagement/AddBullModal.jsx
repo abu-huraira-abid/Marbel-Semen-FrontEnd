@@ -3,7 +3,7 @@
   import { toast } from "react-toastify";
   import API from "../../Register/utils/Api";
 
-  const API_URL = `${import.meta.env.VITE_BASE_URL}/bulls/bulls/`;
+  const API_URL = `${import.meta.env.VITE_BASE_URL}/bulls/`;
 
   export default function AddBullModal({ show, onClose, onSave }) {
     const [newBull, setNewBull] = useState({

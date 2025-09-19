@@ -12,7 +12,7 @@ export default function TotalBullsCard() {
     try {
       const token = localStorage.getItem("access_token"); // or wherever you store it
       const response = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/bulls/bulls/total_count/`,
+        `${import.meta.env.VITE_BASE_URL}/bulls/total_count/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

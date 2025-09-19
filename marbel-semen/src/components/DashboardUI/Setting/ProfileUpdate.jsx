@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ProfileUpdate = () => {
   const [userData, setUserData] = useState({
@@ -8,16 +10,14 @@ const ProfileUpdate = () => {
     email: "",
   });
 
-  const BASE_URL = import.meta.env.VITE_BASE_URL;  // Access the VITE_BASE_URL from the environment variables
-
-  // Get the token from localStorage or sessionStorage
+  const BASE_URL = import.meta.env.VITE_BASE_URL; // Access the VITE_BASE_URL from the environment variables
   const token = localStorage.getItem("access_token"); // Or use sessionStorage
 
   useEffect(() => {
     axios
       .get(`${BASE_URL}/accounts/users/profile/`, {
         headers: {
-          Authorization: `Bearer ${token}`,  // Add token in Authorization header
+          Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
@@ -25,7 +25,7 @@ const ProfileUpdate = () => {
       })
       .catch((error) => {
         console.error("Error fetching profile data:", error);
-        // Handle error (e.g., redirect to login page if unauthorized)
+        toast.error("Failed to load profile. Please try again.");
       });
   }, [BASE_URL, token]);
 
@@ -42,15 +42,15 @@ const ProfileUpdate = () => {
     axios
       .patch(`${BASE_URL}/accounts/users/profile/`, userData, {
         headers: {
-          Authorization: `Bearer ${token}`,  // Add token in Authorization header
+          Authorization: `Bearer ${token}`,
         },
       })
       .then(() => {
-        alert("Profile updated successfully!");
+        toast.success("Profile updated successfully!");
       })
       .catch((error) => {
         console.error("Error updating profile:", error);
-        alert("Failed to update profile.");
+        toast.error("Failed to update profile.");
       });
   };
 

@@ -8,15 +8,14 @@ export default function BullTable() {
   const [bulls, setBulls] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [reload,setReload] = useState(1)
+  const [reload, setReload] = useState(1);
   const bullsPerPage = 5;
   const navigate = useNavigate();
 
   // Fetch bulls from backend
   const fetchBulls = async () => {
     try {
-      const res = await API.get("/bulls/bulls/");
-      console.log("Bulls API response:", res.data);
+      const res = await API.get("/bulls/");
 
       if (res.data?.results?.data && Array.isArray(res.data.results.data)) {
         setBulls(res.data.results.data);
@@ -46,13 +45,16 @@ export default function BullTable() {
   const handleViewUpdate = (id) => {
     navigate(`/account/bulls/${id}`);
   };
+  const handleViewPrice = (id) => {
+    navigate(`/account/bulls/price/${id}`);
+  };
 
   // Delete bull
   const handleDelete = async (id) => {
     try {
-      await API.delete(`/bulls/bulls/${id}/`);
+      await API.delete(`bulls/${id}/`);
       setBulls((prev) => prev.filter((bull) => bull.id !== id));
-      setReload(reload+1)
+      setReload(reload + 1);
       toast.success("Bull deleted successfully");
     } catch (err) {
       console.error("Delete error:", err);
@@ -63,7 +65,7 @@ export default function BullTable() {
   // Update status (PATCH to backend)
   const handleStatusChange = async (id, newStatus) => {
     try {
-      const res = await API.patch(`/bulls/bulls/${id}/`, { status: newStatus });
+      const res = await API.patch(`/bulls/${id}/`, { status: newStatus });
       setBulls((prev) =>
         prev.map((bull) =>
           bull.id === id ? { ...bull, status: res.data.status } : bull
@@ -71,7 +73,7 @@ export default function BullTable() {
       );
 
       toast.success(`Status updated to ${res.data.status}`);
-      setReload(reload+1)
+      setReload(reload + 1);
     } catch (err) {
       console.error("Status update error:", err);
       toast.error("Failed to update status");
@@ -95,6 +97,7 @@ export default function BullTable() {
             <th scope="col">Breed</th>
             <th scope="col">Registration #</th>
             <th scope="col">Status</th>
+            <th scope="col">Price</th>
             <th scope="col">Actions</th>
           </tr>
         </thead>
@@ -132,6 +135,15 @@ export default function BullTable() {
                     <option value="sold">Sold</option>
                     <option value="retired">Retired</option>
                   </select>
+                </td>
+
+                <td>
+                  <button
+                    className="btn btn-sm btn-success d-flex align-items-center gap-2 text-nowrap"
+                    onClick={() => handleViewPrice(bull.id)}
+                  >
+                    View Price
+                  </button>
                 </td>
 
                 <td>

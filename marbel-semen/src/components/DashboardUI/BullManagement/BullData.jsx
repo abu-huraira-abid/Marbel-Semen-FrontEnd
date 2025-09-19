@@ -18,7 +18,7 @@ export default function BullData() {
       try {
         const token = localStorage.getItem("access_token");
         const response = await axios.get(
-          `${import.meta.env.VITE_BASE_URL}/bulls/bulls/${id}/`,
+          `${import.meta.env.VITE_BASE_URL}/bulls/${id}/`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -28,7 +28,6 @@ export default function BullData() {
 
         if (response.data.success) {
           const bull = response.data.data;
-          console.log("Bull details:", bull);
           setFormData({
             ...bull,
             price_packages: Array.isArray(bull.price_packages)
@@ -61,7 +60,7 @@ export default function BullData() {
     const token = localStorage.getItem("access_token");
     const formPayload = new FormData();
 
-    // Append all fields except image file and price_packages
+    // Append fields except image + packages
     const fieldsToSend = [
       "name",
       "breed",
@@ -79,7 +78,7 @@ export default function BullData() {
       }
     });
 
-    // Append price_packages as JSON string
+    // Append packages
     formPayload.append(
       "price_packages",
       JSON.stringify(formData.price_packages ?? [])
@@ -92,7 +91,7 @@ export default function BullData() {
 
     try {
       const response = await axios.patch(
-        `${import.meta.env.VITE_BASE_URL}/bulls/bulls/${id}/`,
+        `${import.meta.env.VITE_BASE_URL}/bulls/${id}/`,
         formPayload,
         {
           headers: {
@@ -104,9 +103,6 @@ export default function BullData() {
 
       if (response.data.success) {
         toast.success("Bull updated successfully!");
-        console.log("Bull updated:", response.data.data);
-
-        // Wait 1.5 seconds before navigating
         setTimeout(() => {
           navigate("/account/bulls");
         }, 1500);
@@ -116,29 +112,6 @@ export default function BullData() {
       toast.error("Failed to update bull.");
     }
   };
-
-  // Package handlers
-  const addPackage = () =>
-    setFormData((prev) => ({
-      ...prev,
-      price_packages: [
-        ...(prev.price_packages ?? []),
-        { min: "", max: "", price: "" },
-      ],
-    }));
-
-  const updatePackage = (index, field, value) =>
-    setFormData((prev) => {
-      const pkgs = [...(prev.price_packages ?? [])];
-      pkgs[index] = { ...pkgs[index], [field]: value };
-      return { ...prev, price_packages: pkgs };
-    });
-
-  const removePackage = (index) =>
-    setFormData((prev) => ({
-      ...prev,
-      price_packages: (prev.price_packages ?? []).filter((_, i) => i !== index),
-    }));
 
   if (loading)
     return <p className="text-center py-5">Loading bull details...</p>;
@@ -239,70 +212,22 @@ export default function BullData() {
         </div>
 
         {/* Health Status */}
-        <div className="mb-3">
+        <div className="mb-3 w-50">
           <label className="form-label">Health Status</label>
-          <input
-            type="text"
-            className="form-control rounded-0"
+          <select
             name="health_status"
+            className="form-select"
             value={formData.health_status ?? ""}
             onChange={handleChange}
-          />
-        </div>
-
-        {/* Price Packages */}
-        <div className="mb-4">
-          <label className="form-label fw-bold">Price Packages</label>
-
-          {(formData.price_packages ?? []).length === 0 && (
-            <div className="text-muted mb-2">
-              No packages yet. Add one below.
-            </div>
-          )}
-
-          {(formData.price_packages ?? []).map((pkg, idx) => (
-            <div key={idx} className="d-flex align-items-center gap-2 mb-2">
-              <input
-                type="number"
-                min="0"
-                className="form-control rounded-0"
-                placeholder="Min Qty"
-                value={pkg.min ?? ""}
-                onChange={(e) => updatePackage(idx, "min", e.target.value)}
-              />
-              <input
-                type="number"
-                min="0"
-                className="form-control rounded-0"
-                placeholder="Max Qty"
-                value={pkg.max ?? ""}
-                onChange={(e) => updatePackage(idx, "max", e.target.value)}
-              />
-              <input
-                type="number"
-                min="0"
-                className="form-control rounded-0"
-                placeholder="Price ($)"
-                value={pkg.price ?? ""}
-                onChange={(e) => updatePackage(idx, "price", e.target.value)}
-              />
-              <button
-                type="button"
-                className="btn btn-danger btn-sm"
-                onClick={() => removePackage(idx)}
-              >
-                Remove
-              </button>
-            </div>
-          ))}
-
-          <button
-            type="button"
-            className="btn btn-outline-primary btn-sm mt-2"
-            onClick={addPackage}
+            required
           >
-            + Add Package
-          </button>
+            <option value="">-- Select Health Status --</option>
+            <option value="excellent">Excellent</option>
+            <option value="good">Good</option>
+            <option value="fair">Fair</option>
+            <option value="poor">Poor</option>
+            <option value="under_treatment">Under Treatment</option>
+          </select>
         </div>
 
         {/* Image Upload */}
