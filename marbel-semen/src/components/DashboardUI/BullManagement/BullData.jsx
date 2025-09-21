@@ -70,6 +70,7 @@ export default function BullData() {
       "weight",
       "semen_straws",
       "health_status",
+      "description", // ✅ added description
     ];
 
     fieldsToSend.forEach((field) => {
@@ -228,6 +229,19 @@ export default function BullData() {
             <option value="poor">Poor</option>
             <option value="under_treatment">Under Treatment</option>
           </select>
+        </div>
+
+        {/* ✅ Description */}
+        <div className="mb-3">
+          <label className="form-label">Description</label>
+          <textarea
+            className="form-control rounded-0"
+            name="description"
+            rows="4"
+            value={formData.description ?? ""}
+            onChange={handleChange}
+            placeholder="Enter bull description"
+          ></textarea>
         </div>
 
         {/* Image Upload */}
