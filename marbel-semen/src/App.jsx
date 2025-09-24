@@ -20,6 +20,7 @@ import BullPrice from "./components/DashboardUI/BullManagement/BullPrice";
 import CustomerQueries from "./components/DashboardUI/CustomerQueries/CustomerQueries";
 import CartStructure from "./components/Cart/CartStructure";
 import CheckoutStructure from "./components/Checkout/CheckoutStructure";
+import OrderHistoryStructure from "./components/OrderHistory/OrderHistoryStructure";
 
 export default function App() {
   return (
@@ -43,6 +44,7 @@ export default function App() {
         <Route path="/account/queries" element={<CustomerQueries />} />
         <Route path="/cart" element={<CartStructure />} />
         <Route path="/checkout" element={<CheckoutStructure />} />
+        <Route path="/order-history" element={<OrderHistoryStructure />} />
       </Routes>
 
       {/* 🔥 Toast container must be mounted once */}

@@ -31,7 +31,7 @@ export default function BullCard({ id }) {
       // add new item
       cart.push({ id: bull.id, qty: quantity });
     }
-
+    
     localStorage.setItem("cart", JSON.stringify(cart));
 
     // 🔹 show success alert

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { FaEye, FaTrash, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import API from "../../Register/utils/Api";
-import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 
 export default function BullTable() {
   const [bulls, setBulls] = useState([]);
@@ -25,7 +25,7 @@ export default function BullTable() {
       }
     } catch (err) {
       console.error("Error fetching bulls:", err);
-      toast.error("Failed to load bulls");
+      Swal.fire("Error", "❌ Failed to load bulls", "error");
     } finally {
       setLoading(false);
     }
@@ -49,16 +49,29 @@ export default function BullTable() {
     navigate(`/account/bulls/price/${id}`);
   };
 
-  // Delete bull
+  // Delete bull with confirmation
   const handleDelete = async (id) => {
-    try {
-      await API.delete(`bulls/${id}/`);
-      setBulls((prev) => prev.filter((bull) => bull.id !== id));
-      setReload(reload + 1);
-      toast.success("Bull deleted successfully");
-    } catch (err) {
-      console.error("Delete error:", err);
-      toast.error("Failed to delete bull");
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This bull will be permanently deleted!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await API.delete(`bulls/${id}/`);
+        setBulls((prev) => prev.filter((bull) => bull.id !== id));
+        setReload(reload + 1);
+
+        Swal.fire("Deleted!", "✅ Bull deleted successfully", "success");
+      } catch (err) {
+        console.error("Delete error:", err);
+        Swal.fire("Error", "❌ Failed to delete bull", "error");
+      }
     }
   };
 
@@ -72,11 +85,11 @@ export default function BullTable() {
         )
       );
 
-      toast.success(`Status updated to ${res.data.status}`);
       setReload(reload + 1);
+      Swal.fire("Updated!", `Status updated!`, "success");
     } catch (err) {
       console.error("Status update error:", err);
-      toast.error("Failed to update status");
+      Swal.fire("Error", "❌ Failed to update status", "error");
     }
   };
 
@@ -167,7 +180,7 @@ export default function BullTable() {
             ))
           ) : (
             <tr>
-              <td colSpan="7" className="text-center py-3">
+              <td colSpan="8" className="text-center py-3">
                 No bulls found
               </td>
             </tr>

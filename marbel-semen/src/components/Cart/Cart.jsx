@@ -8,7 +8,7 @@ export default function Cart() {
   const [cart, setCart] = useState([]);
   const [bulls, setBulls] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   // ✅ Load cart from localStorage
   useEffect(() => {
@@ -69,24 +69,22 @@ export default function Cart() {
   };
 
   const getPricePerUnit = (bull, qty) => {
-  if (!bull.price_packages || bull.price_packages.length === 0) return 0;
+    if (!bull.price_packages || bull.price_packages.length === 0) return 0;
 
-  // Find matching package
-  const pkg = bull.price_packages.find(
-    (p) => qty >= p.min_units && qty <= p.max_units
-  );
+    // Find matching package
+    const pkg = bull.price_packages.find(
+      (p) => qty >= p.min_units && qty <= p.max_units
+    );
 
-  if (pkg) return parseFloat(pkg.price_per_unit);
+    if (pkg) return parseFloat(pkg.price_per_unit);
 
-  // If quantity is greater than last package max → use last package price
-  const lastPkg = bull.price_packages.reduce((max, p) =>
-    p.max_units > max.max_units ? p : max
-  );
+    // If quantity is greater than last package max → use last package price
+    const lastPkg = bull.price_packages.reduce((max, p) =>
+      p.max_units > max.max_units ? p : max
+    );
 
-  return parseFloat(lastPkg.price_per_unit);
-};
-
-
+    return parseFloat(lastPkg.price_per_unit);
+  };
 
   const calculateSubtotal = (bull) => {
     const pricePerUnit = getPricePerUnit(bull, bull.qty);
@@ -108,6 +106,12 @@ export default function Cart() {
     return (
       <div className="text-center py-5">
         <h3>Your cart is empty 🛒</h3>
+        <button
+          className="btn btn-primary mt-3 rounded-1 px-3"
+          onClick={() => navigate("/order-history")}
+        >
+          View Order History
+        </button>
       </div>
     );
   }
@@ -146,9 +150,7 @@ export default function Cart() {
                   </div>
                 </td>
                 <td>
-                  <div className="text-nowrap">
-                    {bull.breed}
-                  </div>
+                  <div className="text-nowrap">{bull.breed}</div>
                 </td>
                 <td className="text-center" style={{ width: "150px" }}>
                   <input
@@ -188,8 +190,20 @@ export default function Cart() {
             <h5 className="card-title">Cart Summary</h5>
             <p className="mb-2">Total Items: {bulls.length}</p>
             <h4 className="text-success">Total: ${total.toFixed(2)}</h4>
-            <button className="btn btn-primary w-100 mt-3" onClick={()=> navigate("/checkout")}>
+
+            <button
+              className="btn btn-primary w-100 mt-3"
+              onClick={() => navigate("/checkout")}
+            >
               <i className="bi bi-credit-card me-1"></i> Checkout
+            </button>
+
+            {/* ✅ Order History Button */}
+            <button
+              className="btn btn-primary w-100 mt-2"
+              onClick={() => navigate("/order-history")}
+            >
+              View Order History
             </button>
           </div>
         </div>

@@ -1,149 +1,111 @@
-import React, { useState } from "react";
-import {
-  FaEye,
-  FaTrash,
-  FaSearch,
-  FaCalendarAlt,
-  FaCreditCard,
-  FaFlag,
-} from "react-icons/fa";
+import React, { useState, useEffect, useReducer } from "react";
+import { FaEye, FaTrash, FaSearch } from "react-icons/fa";
+import axios from "axios";
+import Swal from "sweetalert2";
 import OrderReceipt from "./OrderReceipt";
 
-const ordersData = [
-  {
-    id: "10401",
-    customer: "Alice Smith",
-    orderDate: "01/05/2024",
-    total: "$1,200.00",
-    paymentStatus: "Completed",
-    orderStatus: "Completed",
-  },
-  {
-    id: "10402",
-    customer: "Bob Johnson",
-    orderDate: "01/10/2024",
-    total: "$850.00",
-    paymentStatus: "Pending",
-    orderStatus: "Pending",
-  },
-  {
-    id: "10403",
-    customer: "John Doe",
-    orderDate: "03/24/2024",
-    total: "$1,200.00",
-    paymentStatus: "Pending",
-    orderStatus: "Pending",
-  },
-  {
-    id: "10404",
-    customer: "Rusty",
-    orderDate: "11/29/2024",
-    total: "$800.00",
-    paymentStatus: "Processing",
-    orderStatus: "Processing",
-  },
-  {
-    id: "10405",
-    customer: "Maverick",
-    orderDate: "02/14/2024",
-    total: "$1,500.00",
-    paymentStatus: "Cancelled",
-    orderStatus: "Cancelled",
-  },
-  {
-    id: "10406",
-    customer: "Simmental",
-    orderDate: "03/01/2024",
-    total: "$900.00",
-    paymentStatus: "Cancel",
-    orderStatus: "Cancel",
-  },
-  {
-    id: "10407",
-    customer: "Daisy Ridley",
-    orderDate: "04/11/2024",
-    total: "$2,100.00",
-    paymentStatus: "Completed",
-    orderStatus: "Completed",
-  },
-  {
-    id: "10408",
-    customer: "Ethan Hunt",
-    orderDate: "05/05/2024",
-    total: "$1,750.00",
-    paymentStatus: "Processing",
-    orderStatus: "Processing",
-  },
-  {
-    id: "10409",
-    customer: "Fiona Gallagher",
-    orderDate: "06/15/2024",
-    total: "$1,050.00",
-    paymentStatus: "Pending",
-    orderStatus: "Pending",
-  },
-  {
-    id: "10410",
-    customer: "George Lucas",
-    orderDate: "07/21/2024",
-    total: "$3,200.00",
-    paymentStatus: "Completed",
-    orderStatus: "Completed",
-  },
-];
-
 const statusStyles = {
-  Completed: "bg-success text-white",
-  Pending: "bg-warning text-dark",
-  Processing: "bg-primary text-white",
-  Cancelled: "bg-secondary text-white",
-  Cancel: "bg-danger text-white",
-};
-
-const updateOrderStatus = (orderId, newStatus) => {
-  setOrders((prev) =>
-    prev.map((order) =>
-      order.id === orderId ? { ...order, status: newStatus } : order
-    )
-  );
+  completed: "bg-success text-white text-capitalize py-2 rounded-1",
+  pending: "bg-warning text-dark text-capitalize py-2 rounded-1",
+  processing: "bg-primary text-white text-capitalize py-2 rounded-1",
+  cancelled: "bg-secondary text-white text-capitalize py-2 rounded-1",
+  cancel: "bg-danger text-white text-capitalize py-2 rounded-1",
 };
 
 export default function OrderTable() {
-  const [orders, setOrders] = useState(ordersData);
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
+  const [orders, setOrders] = useState([]);
+  const [reducer,forceReducer] = useReducer(x => x+1,0)
   const [filters, setFilters] = useState({
-    customer: "",
-    orderDate: "",
-    paymentStatus: "",
-    orderStatus: "",
+    name: "",
+    bull_name: "",
+    status: "",
   });
   const [page, setPage] = useState(1);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const itemsPerPage = 5;
 
+  // ✅ Fetch orders
+  useEffect(() => {
+    fetchOrders();
+  }, [reducer]);
+
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(`${BASE_URL}/bulls/1/orders/`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+      setOrders(res.data.results || []);
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+      Swal.fire("Error", "Failed to fetch orders!", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ Update order status locally
   const updateOrderStatus = (orderId, newStatus) => {
     setOrders((prev) =>
-      prev.map((order) =>
-        order.id === orderId ? { ...order, status: newStatus } : order
-      )
+      prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
     );
   };
 
-  // Filter orders
+  // ✅ Delete order with SweetAlert2
+  const handleDelete = async (orderId) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This action cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await axios.delete(`${BASE_URL}/bulls/orders/${orderId}/`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+
+      setOrders((prev) => prev.filter((o) => o.id !== orderId));
+
+      Swal.fire("Deleted!", "The order has been deleted.", "success");
+    } catch (err) {
+      console.error("Error deleting order:", err);
+
+      if (err.response?.status === 403) {
+        Swal.fire("Permission Denied", "You don’t have permission to delete this order.", "error");
+      } else {
+        Swal.fire("Error", "Failed to delete order!", "error");
+      }
+    }
+  };
+
+  // ✅ Apply filters
   const filteredOrders = orders.filter(
     (order) =>
-      order.customer.toLowerCase().includes(filters.customer.toLowerCase()) &&
-      order.orderDate.toLowerCase().includes(filters.orderDate.toLowerCase()) &&
-      order.paymentStatus
+      (order.name || "").toLowerCase().includes(filters.name.toLowerCase()) &&
+      (order.bull_name || "")
         .toLowerCase()
-        .includes(filters.paymentStatus.toLowerCase()) &&
-      order.orderStatus
+        .includes(filters.bull_name.toLowerCase()) &&
+      (order.status || "")
         .toLowerCase()
-        .includes(filters.orderStatus.toLowerCase())
+        .includes(filters.status.toLowerCase())
   );
-  // Pagination
-  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+
+  // ✅ Pagination
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage) || 1;
   const paginatedOrders = filteredOrders.slice(
     (page - 1) * itemsPerPage,
     page * itemsPerPage
@@ -159,126 +121,99 @@ export default function OrderTable() {
     setShowModal(true);
   };
 
-  const handleStatusUpdate = (orderId, newStatus) => {
-    setOrders((prev) =>
-      prev.map((o) => (o.id === orderId ? { ...o, orderStatus: newStatus } : o))
-    );
-  };
-
   return (
     <div className="container mt-4 p-4 border rounded shadow-sm bg-white">
       {/* Filters */}
       <div className="row mb-3 g-2">
-        {/* Customer Filter */}
-        <div className="col-md-3 position-relative">
+        <div className="col-md-4 position-relative">
           <input
             type="text"
-            name="customer"
-            value={filters.customer}
+            name="name"
+            value={filters.name}
             onChange={handleFilterChange}
             className="form-control ps-5"
             placeholder="Search Customer"
           />
           <FaSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
         </div>
-        {/* Date Filter */}
-        <div className="col-md-3 position-relative">
+        <div className="col-md-4 position-relative">
           <input
             type="text"
-            name="orderDate"
-            value={filters.orderDate}
+            name="bull_name"
+            value={filters.bull_name}
             onChange={handleFilterChange}
             className="form-control ps-5"
-            placeholder="Search Date"
+            placeholder="Search Bull"
           />
-          <FaCalendarAlt className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
+          <FaSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
         </div>
-        {/* Payment Filter */}
-        <div className="col-md-3 position-relative">
+        <div className="col-md-4 position-relative">
           <select
-            name="paymentStatus"
-            value={filters.paymentStatus}
+            name="status"
+            value={filters.status}
             onChange={handleFilterChange}
-            className="form-select ps-5"
-          >
-            <option value="">All Payments</option>
-            <option value="Completed">Completed</option>
-            <option value="Pending">Pending</option>
-            <option value="Processing">Processing</option>
-            <option value="Cancelled">Cancelled</option>
-            <option value="Cancel">Cancel</option>
-          </select>
-          <FaCreditCard className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
-        </div>
-        {/* Order Status Filter */}
-        <div className="col-md-3 position-relative">
-          <select
-            name="orderStatus"
-            value={filters.orderStatus}
-            onChange={handleFilterChange}
-            className="form-select ps-5"
+            className="form-select"
           >
             <option value="">All Statuses</option>
-            <option value="Completed">Completed</option>
-            <option value="Pending">Pending</option>
-            <option value="Processing">Processing</option>
-            <option value="Cancelled">Cancelled</option>
-            <option value="Cancel">Cancel</option>
+            <option value="completed">Completed</option>
+            <option value="pending">Pending</option>
+            <option value="processing">Processing</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="cancel">Cancel</option>
           </select>
-          <FaFlag className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
         </div>
       </div>
 
       {/* Table */}
-      <div className="table-responsive">
+      <div className="table-responsive text-nowrap">
         <table className="table table-hover align-middle text-nowrap">
           <thead className="table-light">
             <tr>
               <th>Order ID</th>
               <th>Customer</th>
-              <th>Order Date</th>
-              <th>Total</th>
-              <th>Payment</th>
+              <th>Bull Name</th>
+              <th>Quantity</th>
+              <th>Total Price</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {paginatedOrders.length > 0 ? (
+            {loading ? (
+              <tr>
+                <td colSpan="7" className="text-center">
+                  <div className="spinner-border text-primary" role="status" />
+                </td>
+              </tr>
+            ) : paginatedOrders.length > 0 ? (
               paginatedOrders.map((order) => (
                 <tr key={order.id}>
                   <td>{order.id}</td>
-                  <td>{order.customer}</td>
-                  <td>{order.orderDate}</td>
-                  <td>{order.total}</td>
+                  <td>{order.name}</td>
+                  <td>{order.bull_name}</td>
+                  <td>{order.quantity}</td>
+                  <td>${order.total_price}</td>
                   <td>
                     <span
                       className={`badge ${
-                        statusStyles[order.paymentStatus] ||
-                        "bg-light text-dark"
+                        statusStyles[order.status] || "bg-light text-dark"
                       } w-100 text-center`}
                     >
-                      {order.paymentStatus}
+                      {order.status}
                     </span>
                   </td>
                   <td>
-                    <span
-                      className={`badge ${
-                        statusStyles[order.orderStatus] || "bg-light text-dark"
-                      } w-100 text-center`}
-                    >
-                      {order.orderStatus}
-                    </span>
-                  </td>
-                  <td>
-                    <div>
+                    <div className="d-flex">
                       <button
-                        className="btn btn-sm btn-primary px-3 mx-1"
+                        className="btn btn-sm btn-primary px-3 mx-1 text-nowrap"
                         onClick={() => handleView(order)}
                       >
                         <FaEye className="mb-1" /> View
                       </button>
-                      <button className="btn btn-sm btn-danger px-3 mx-1">
+                      <button
+                        className="btn btn-sm btn-danger px-3 mx-1 text-nowrap"
+                        onClick={() => handleDelete(order.id)}
+                      >
                         <FaTrash className="mb-1" /> Delete
                       </button>
                     </div>
@@ -336,6 +271,7 @@ export default function OrderTable() {
         show={showModal}
         handleClose={() => setShowModal(false)}
         order={selectedOrder}
+        forceReducer={forceReducer}
         updateOrderStatus={updateOrderStatus}
       />
     </div>
