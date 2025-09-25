@@ -1,5 +1,5 @@
 import SiteLinks from "./SiteLinks";
-import "../../assets/styles/Footer.css"
+import "../../../src/assets/styles/Footer.css"
 import Connect from "./Connect";
 import FollowUs from "./FollowUs";
 import Copyright from "./Copyright";

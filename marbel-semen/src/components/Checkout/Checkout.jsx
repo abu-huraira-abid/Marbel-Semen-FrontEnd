@@ -7,6 +7,7 @@ import {
   FaMapMarkerAlt,
   FaCreditCard,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 export default function Checkout() {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -16,6 +17,7 @@ export default function Checkout() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [alert, setAlert] = useState({ type: "", message: "" });
+  const navigate = useNavigate()
 
   const [formData, setFormData] = useState({
     name: "",
@@ -116,7 +118,7 @@ export default function Checkout() {
 
       setAlert({ type: "success", message: "Order submitted successfully!" });
       localStorage.removeItem("cart");
-      localStorage.setItem("user_email",formData.email)
+      localStorage.setItem("user_email", formData.email);
       setCart([]);
       setBulls([]);
       setFormData({ name: "", phone: "", email: "", address: "" });
@@ -139,12 +141,19 @@ export default function Checkout() {
       </div>
     );
 
-  if (bulls.length === 0)
+  if (bulls.length === 0) {
     return (
       <div className="text-center py-5">
         <h3>Your cart is empty 🛒</h3>
+        <button
+          className="btn btn-primary mt-3 rounded-1 px-3"
+          onClick={() => navigate("/order-history")}
+        >
+          View Order History
+        </button>
       </div>
     );
+  }
 
   return (
     <div className="container py-5" style={{ fontFamily: "Poppins" }}>

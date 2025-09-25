@@ -21,6 +21,7 @@ import CustomerQueries from "./components/DashboardUI/CustomerQueries/CustomerQu
 import CartStructure from "./components/Cart/CartStructure";
 import CheckoutStructure from "./components/Checkout/CheckoutStructure";
 import OrderHistoryStructure from "./components/OrderHistory/OrderHistoryStructure";
+import Process from "./components/Process/Process";
 
 export default function App() {
   return (
@@ -45,6 +46,7 @@ export default function App() {
         <Route path="/cart" element={<CartStructure />} />
         <Route path="/checkout" element={<CheckoutStructure />} />
         <Route path="/order-history" element={<OrderHistoryStructure />} />
+        <Route path="/process" element={<Process />} />
       </Routes>
 
       {/* 🔥 Toast container must be mounted once */}

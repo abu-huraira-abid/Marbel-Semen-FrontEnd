@@ -12,7 +12,7 @@ import {
 } from "react-icons/fa";
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import "../../assets/styles/Dashboard.css";
+import "../../../src/assets/styles/Dashboard.css";
 import API from "../Register/utils/Api";
 
 export default function SideBar() {
