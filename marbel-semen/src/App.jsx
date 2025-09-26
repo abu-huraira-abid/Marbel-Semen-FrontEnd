@@ -22,6 +22,7 @@ import CartStructure from "./components/Cart/CartStructure";
 import CheckoutStructure from "./components/Checkout/CheckoutStructure";
 import OrderHistoryStructure from "./components/OrderHistory/OrderHistoryStructure";
 import Process from "./components/Process/Process";
+import BullInventory from "./components/DashboardUI/BullInventory/BullInvetory";
 
 export default function App() {
   return (
@@ -43,6 +44,7 @@ export default function App() {
         <Route path="/account/users" element={<UsersManagement />} />
         <Route path="/account/settings" element={<Setting />} />
         <Route path="/account/queries" element={<CustomerQueries />} />
+        <Route path="/account/inventory" element={<BullInventory />} />
         <Route path="/cart" element={<CartStructure />} />
         <Route path="/checkout" element={<CheckoutStructure />} />
         <Route path="/order-history" element={<OrderHistoryStructure />} />

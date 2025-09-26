@@ -114,9 +114,9 @@ export default function Queries() {
                   >
                     {q.message}
                   </td>
-                  <td className="text-capitalize">
+                  <td className="text-capitalize text-center">
                     <span
-                      className={`badge px-4 ${getBadgeClass(q.status)}`}
+                      className={`badge px-4 rounded-0 py-2 ${getBadgeClass(q.status)}`}
                       style={{ width: "100px" }}
                     >
                       {q.status}
@@ -129,7 +129,7 @@ export default function Queries() {
                       data-bs-target="#queryModal"
                       onClick={() => {
                         setSelectedQuery(q);
-                        setStatusUpdate(q.status); // prefill dropdown
+                        setStatusUpdate(q.status); 
                       }}
                     >
                       <FaEye className="me-1" /> View
@@ -217,7 +217,7 @@ export default function Queries() {
                   <p>
                     <strong>Status:</strong>{" "}
                     <span
-                      className={`text-capitalize badge px-4 ${getBadgeClass(
+                      className={`text-capitalize badge px-4 py-2 rounded-0 ${getBadgeClass(
                         selectedQuery.status
                       )}`}
                     >

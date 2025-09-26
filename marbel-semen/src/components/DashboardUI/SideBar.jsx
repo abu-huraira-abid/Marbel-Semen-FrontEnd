@@ -8,7 +8,8 @@ import {
   FaCog,
   FaBars,
   FaSignOutAlt,
-  FaEnvelopeOpenText, // ✅ New icon
+  FaEnvelopeOpenText,
+  FaBoxes, // ✅ New icon for inventory
 } from "react-icons/fa";
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -32,7 +33,7 @@ export default function SideBar() {
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${access}`, // ✅ Add access token
+              Authorization: `Bearer ${access}`,
             },
           }
         );
@@ -40,11 +41,9 @@ export default function SideBar() {
     } catch (error) {
       console.error("Logout API error:", error.response?.data || error.message);
     } finally {
-      // Always clear storage
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
       localStorage.removeItem("userEmail");
-
       navigate("/account");
     }
   };
@@ -55,14 +54,15 @@ export default function SideBar() {
     { name: "Semen Batches", icon: <FaFlask />, path: "/account/semen-batches" },
     { name: "Order Management", icon: <FaShoppingCart />, path: "/account/orders" },
     { name: "User Management", icon: <FaUsers />, path: "/account/users" },
-    { name: "Query Management", icon: <FaEnvelopeOpenText />, path: "/account/queries" }, // ✅ Added here
+    { name: "Query Management", icon: <FaEnvelopeOpenText />, path: "/account/queries" },
+    { name: "Bull Inventory", icon: <FaBoxes />, path: "/account/inventory" }, // ✅ Added here
     { name: "Reports", icon: <FaChartBar />, path: "/account/reports" },
     { name: "Settings", icon: <FaCog />, path: "/account/settings" },
   ];
 
   return (
     <>
-      {/* Toggle button (only visible on mobile/tablet) */}
+      {/* Toggle button (mobile/tablet) */}
       <button
         className="btn btn-dark d-lg-none m-2 position-fixed"
         style={{ left: "10px", top: "10px", zIndex: "1100" }}
@@ -101,7 +101,7 @@ export default function SideBar() {
                   }`
                 }
                 style={{ transition: "0.3s" }}
-                onClick={() => setIsOpen(false)} // auto-close on mobile
+                onClick={() => setIsOpen(false)}
               >
                 <span className="me-2">{item.icon}</span>
                 {item.name}
@@ -110,7 +110,7 @@ export default function SideBar() {
           ))}
         </ul>
 
-        {/* Logout Button at Bottom */}
+        {/* Logout */}
         <div className="mt-auto text-center mx-auto mb-5 mb-lg-4">
           <button
             className="btn btn-danger px-5 rounded-1 d-flex align-items-center justify-content-center"
