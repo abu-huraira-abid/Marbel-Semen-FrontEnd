@@ -10,57 +10,28 @@ export default function Inventory() {
   const [selectedBull, setSelectedBull] = useState(null);
   const [updatedQuantity, setUpdatedQuantity] = useState("");
 
-  // Fetch inventories and bulls, then merge
+  // Get token from localStorage
+  const token = localStorage.getItem("access_token");
+
+  // Fetch all bulls with stock
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 1. get existing inventories
-        const invRes = await axios.get(`${BASE_URL}/api/bulls/inventories/`);
-        const inventories = invRes.data; // [{id, bull_id, quantity}, ...]
+        const res = await axios.get(`${BASE_URL}/bulls/stocks/`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-        // 2. get bulls
-        const bullsRes = await axios.get(
-          `${BASE_URL}/api/bulls/avaiable-in-stock/`
-        );
-        const bulls = bullsRes.data; // [{id, name, breed, image}, ...]
-
-        let merged = [];
-
-        // 3. merge bulls with inventories
-        for (const bull of bulls) {
-          const inv = inventories.find((i) => i.bull_id === bull.id);
-
-          if (inv) {
-            merged.push({
-              ...bull,
-              quantity: inv.quantity,
-              invId: inv.id,
-            });
-          } else {
-            // 4. create new inventory for missing bulls
-            const newInv = await axios.post(
-              `${BASE_URL}/api/bulls/inventories/`,
-              {
-                bull_id: bull.id,
-                quantity: 0,
-              }
-            );
-            merged.push({
-              ...bull,
-              quantity: newInv.data.quantity,
-              invId: newInv.data.id,
-            });
-          }
-        }
-
-        setInventory(merged);
+        console.log("Stocks Response:", res.data);
+        setInventory(res.data.data || []); // expecting {success, count, data}
       } catch (error) {
-        console.error("Error loading data:", error);
+        console.error("Error loading stocks:", error.response?.data || error);
       }
     };
 
     fetchData();
-  }, [BASE_URL]);
+  }, [BASE_URL, token]);
 
   const handleEditClick = (bull) => {
     setSelectedBull(bull);
@@ -71,14 +42,17 @@ export default function Inventory() {
   const handleSave = async () => {
     try {
       if (selectedBull) {
-        // Update backend
-        await axios.patch(
-          `${BASE_URL}/api/bulls/inventories/${selectedBull.invId}/`,
+        const res = await axios.patch(
+          `${BASE_URL}/bulls/${selectedBull.id}/stock/`,
+          { quantity: updatedQuantity },
           {
-            bull_id: selectedBull.id,
-            quantity: updatedQuantity,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
         );
+
+        console.log("Update Stock Response:", res.data);
 
         // Update UI state
         setInventory((prev) =>
@@ -91,7 +65,7 @@ export default function Inventory() {
       }
       setShowModal(false);
     } catch (error) {
-      console.error("Error updating inventory:", error);
+      console.error("Error updating stock:", error.response?.data || error);
     }
   };
 
@@ -118,11 +92,11 @@ export default function Inventory() {
                   <tr key={bull.id}>
                     <td>
                       <img
-                        src={bull.image}
+                        src={`${bull.image}`} // prepend BASE_URL here
                         alt={bull.name}
-                        className="rounded-circle border"
+                        className="rounded-2"
                         style={{
-                          width: "60px",
+                          width: "80px",
                           height: "60px",
                           objectFit: "cover",
                         }}
@@ -131,16 +105,26 @@ export default function Inventory() {
                     <td className="fw-semibold">{bull.name}</td>
                     <td>{bull.breed}</td>
                     <td>
-                      <span className="badge bg-primary px-3 py-2 fs-6">
+                      <span
+                        className={`badge px-3 rounded-0 py-2 fs-6 ${
+                          bull.quantity === 0
+                            ? "bg-danger"
+                            : bull.quantity > 0 && bull.quantity <= 5
+                            ? "bg-warning text-dark"
+                            : "bg-success"
+                        }`}
+                        style={{width:"70px"}}
+                      >
                         {bull.quantity}
                       </span>
                     </td>
+
                     <td className="text-center">
                       <button
-                        className="btn btn-outline-warning btn-sm d-flex align-items-center mx-auto"
+                        className="btn btn-primary btn-sm d-flex align-items-center mx-auto rounded-1 px-4"
                         onClick={() => handleEditClick(bull)}
                       >
-                        <FaEdit className="me-1" /> Edit
+                        <FaEdit className="me-1" /> Update
                       </button>
                     </td>
                   </tr>
@@ -151,7 +135,7 @@ export default function Inventory() {
         </div>
       </div>
 
-      {/* Custom Bootstrap Modal */}
+      {/* Modal */}
       {showModal && (
         <div
           className="modal fade show"

@@ -6,7 +6,8 @@ export default function BullCard({ id }) {
 
   const [bull, setBull] = useState(null);
   const [quantity, setQuantity] = useState(1);
-  const [alert, setAlert] = useState(""); // 🔹 state for alert message
+  const [alert, setAlert] = useState(""); // success/warning alerts
+  const [error, setError] = useState(""); // field error
 
   useEffect(() => {
     const fetchBull = async () => {
@@ -21,24 +22,48 @@ export default function BullCard({ id }) {
   }, [id, BASE_URL]);
 
   const handleAddToCart = () => {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    if (quantity > bull.quantity) {
+      setError(`Only ${bull.quantity} units available!`);
+      return;
+    }
 
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
     const existingIndex = cart.findIndex((item) => item.id === bull.id);
+
     if (existingIndex !== -1) {
-      // update qty if already in cart
       cart[existingIndex].qty += quantity;
     } else {
-      // add new item
       cart.push({ id: bull.id, qty: quantity });
     }
-    
+
     localStorage.setItem("cart", JSON.stringify(cart));
 
-    // 🔹 show success alert
     setAlert(`${bull.name} added to cart successfully!`);
+    setError("");
 
-    // remove alert after 3 sec
     setTimeout(() => setAlert(""), 3000);
+  };
+
+  const renderStockBadge = () => {
+    if (bull.quantity === 0) {
+      return (
+        <span className="badge bg-danger fs-6 d-inline-flex align-items-center gap-1 rounded-0 py-3 px-5">
+          <i className="bi bi-x-circle"></i> Out of Stock
+        </span>
+      );
+    } else if (bull.quantity > 0 && bull.quantity < 6) {
+      return (
+        <span className="badge bg-warning text-dark fs-6 d-inline-flex align-items-center gap-1 rounded-0 py-3 px-5">
+          <i className="bi bi-exclamation-triangle"></i> Limited Stock ({bull.quantity})
+        </span>
+      );
+    } else {
+      return (
+        <span className="badge bg-success fs-6 d-inline-flex align-items-center gap-1 rounded-0 py-3 px-5">
+          <i className="bi bi-check-circle"></i> In Stock ({bull.quantity})
+        </span>
+      );
+    }
   };
 
   if (!bull) {
@@ -52,26 +77,18 @@ export default function BullCard({ id }) {
   return (
     <div className="container-fluid bg-light py-5" style={{ fontFamily: "Poppins" }}>
       <div className="container">
-        {/* ✅ Bootstrap Alert */}
+        {/* Success Alert */}
         {alert && (
-          <div className="alert alert-success alert-dismissible fade show " role="alert">
+          <div className="alert alert-success alert-dismissible fade show" role="alert">
             {alert}
-            <button
-              type="button"
-              className="btn-close"
-              onClick={() => setAlert("")}
-            ></button>
+            <button type="button" className="btn-close" onClick={() => setAlert("")}></button>
           </div>
         )}
 
         <div className="row">
           {/* Image */}
           <div className="col-12 col-lg-6">
-            <img
-              src={bull.image}
-              alt={bull.name}
-              className="img-fluid rounded-3"
-            />
+            <img src={bull.image} alt={bull.name} className="img-fluid rounded-3" />
           </div>
 
           {/* Details */}
@@ -103,22 +120,37 @@ export default function BullCard({ id }) {
 
             <div className="my-2 fs-5 text-danger">REG # {bull.registration_id}</div>
 
+            {/* Stock Status */}
+            <div className="my-2">{renderStockBadge()}</div>
+
             {/* Quantity + Add to Cart */}
             <div className="d-flex align-items-center gap-2 mt-3">
               <input
                 type="number"
                 min="1"
                 value={quantity}
-                onChange={(e) => setQuantity(Number(e.target.value))}
-                className="form-control text-center w-25 py-2"
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  setQuantity(val);
+                  if (val > bull.quantity) {
+                    setError(`Only ${bull.quantity} units available!`);
+                  } else {
+                    setError("");
+                  }
+                }}
+                className={`form-control text-center w-25 py-2 ${error ? "is-invalid" : ""}`}
               />
               <button
                 className="btn btn-success rounded-1"
                 onClick={handleAddToCart}
+                disabled={bull.quantity === 0}
               >
                 <i className="bi bi-cart-plus me-1"></i> Add
               </button>
             </div>
+
+            {/* Input error message */}
+            {error && <div className="invalid-feedback d-block">{error}</div>}
           </div>
         </div>
       </div>
