@@ -9,7 +9,7 @@ import {
   FaBars,
   FaSignOutAlt,
   FaEnvelopeOpenText,
-  FaBoxes, // ✅ New icon for inventory
+  FaBoxes,
 } from "react-icons/fa";
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -18,9 +18,11 @@ import API from "../Register/utils/Api";
 
 export default function SideBar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false); // spinner state
   const navigate = useNavigate();
 
   const handleLogout = async () => {
+    setLoggingOut(true); // start spinner
     try {
       const LOGOUT_URL = import.meta.env.VITE_LOGOUT;
       const refresh = localStorage.getItem("refresh_token");
@@ -44,6 +46,7 @@ export default function SideBar() {
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
       localStorage.removeItem("userEmail");
+      setLoggingOut(false); // stop spinner
       navigate("/account");
     }
   };
@@ -55,7 +58,7 @@ export default function SideBar() {
     { name: "Order Management", icon: <FaShoppingCart />, path: "/account/orders" },
     { name: "User Management", icon: <FaUsers />, path: "/account/users" },
     { name: "Query Management", icon: <FaEnvelopeOpenText />, path: "/account/queries" },
-    { name: "Bull Inventory", icon: <FaBoxes />, path: "/account/inventory" }, // ✅ Added here
+    { name: "Bull Inventory", icon: <FaBoxes />, path: "/account/inventory" },
     { name: "Reports", icon: <FaChartBar />, path: "/account/reports" },
     { name: "Settings", icon: <FaCog />, path: "/account/settings" },
   ];
@@ -115,7 +118,16 @@ export default function SideBar() {
           <button
             className="btn btn-danger px-5 rounded-1 d-flex align-items-center justify-content-center"
             onClick={handleLogout}
+            disabled={loggingOut}
           >
+            {loggingOut && (
+              <span
+                className="spinner-border spinner-border-sm me-2"
+                role="status"
+              >
+                <span className="visually-hidden">Logging out...</span>
+              </span>
+            )}
             <FaSignOutAlt className="me-2" /> Logout
           </button>
         </div>

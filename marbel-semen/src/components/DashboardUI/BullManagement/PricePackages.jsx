@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 
 export default function PricePackages() {
   const { id } = useParams();
@@ -20,10 +20,16 @@ export default function PricePackages() {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        const data = Array.isArray(res.data) ? res.data : res.data.results || [];
+        const data = Array.isArray(res.data)
+          ? res.data
+          : res.data.results || [];
         setPackages(data);
       } catch (err) {
-        toast.error("Failed to load price packages");
+        Swal.fire({
+          icon: "error",
+          title: "Failed to Load",
+          text: "Unable to load price packages.",
+        });
       } finally {
         setLoading(false);
       }
@@ -32,9 +38,12 @@ export default function PricePackages() {
     fetchPackages();
   }, [id]);
 
-  // Add a new (unsaved) package
+  // Add new (unsaved) package
   const addPackage = () => {
-    setPackages((prev) => [...prev, { min_units: "", max_units: "", price_per_unit: "" }]);
+    setPackages((prev) => [
+      ...prev,
+      { min_units: "", max_units: "", price_per_unit: "" },
+    ]);
   };
 
   // Update a package in state
@@ -48,11 +57,20 @@ export default function PricePackages() {
 
   // Save all packages (create/update)
   const savePackages = async () => {
+    if (packages.length === 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "No Packages",
+        text: "Please add at least one package before saving.",
+      });
+      return;
+    }
+
     try {
       setLoading(true);
       for (const pkg of packages) {
         if (pkg.id) {
-          // Existing package → update
+          // Update existing
           await axios.patch(
             `${BASE_URL}/bulls/${id}/price-packages/${pkg.id}/`,
             {
@@ -63,7 +81,7 @@ export default function PricePackages() {
             { headers: { Authorization: `Bearer ${token}` } }
           );
         } else {
-          // New package → create
+          // Create new
           await axios.post(
             `${BASE_URL}/bulls/${id}/price-packages/`,
             {
@@ -75,9 +93,20 @@ export default function PricePackages() {
           );
         }
       }
-      toast.success("Price packages saved successfully");
+
+      Swal.fire({
+        icon: "success",
+        title: "Saved Successfully!",
+        text: "Price packages have been updated.",
+        showConfirmButton: false,
+        timer: 2000,
+      });
     } catch (err) {
-      toast.error("Failed to save price packages");
+      Swal.fire({
+        icon: "error",
+        title: "Save Failed",
+        text: "An error occurred while saving packages.",
+      });
     } finally {
       setLoading(false);
     }
@@ -85,21 +114,48 @@ export default function PricePackages() {
 
   // Remove package (delete from API if it exists)
   const removePackage = async (index, pkg) => {
+    const confirm = await Swal.fire({
+      icon: "warning",
+      title: "Are you sure?",
+      text: "This will permanently delete the package.",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it",
+      cancelButtonText: "Cancel",
+      confirmButtonColor: "#d33",
+    });
+
+    if (!confirm.isConfirmed) return;
+
     if (pkg.id) {
       try {
         await axios.delete(`${BASE_URL}/bulls/${id}/price-packages/${pkg.id}/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        toast.success("Package deleted");
+        Swal.fire({
+          icon: "success",
+          title: "Deleted",
+          text: "Package deleted successfully.",
+          timer: 1500,
+          showConfirmButton: false,
+        });
       } catch (err) {
-        toast.error("Failed to delete package");
-        return; // don’t remove from UI if API failed
+        Swal.fire({
+          icon: "error",
+          title: "Delete Failed",
+          text: "Could not delete package. Please try again.",
+        });
+        return;
       }
     } else {
-      toast.info("New package removed");
+      Swal.fire({
+        icon: "info",
+        title: "Removed",
+        text: "New (unsaved) package removed.",
+        timer: 1200,
+        showConfirmButton: false,
+      });
     }
 
-    // Update state
     setPackages((prev) => prev.filter((_, i) => i !== index));
   };
 
@@ -116,7 +172,10 @@ export default function PricePackages() {
       )}
 
       {packages.map((pkg, idx) => (
-        <div key={pkg.id || idx} className="d-flex align-items-center gap-2 mb-2 w-75">
+        <div
+          key={pkg.id || idx}
+          className="d-flex align-items-center gap-2 mb-2 w-75"
+        >
           <input
             type="number"
             min="0"
@@ -139,7 +198,9 @@ export default function PricePackages() {
             className="form-control rounded-0"
             placeholder="Price ($)"
             value={pkg.price_per_unit ?? ""}
-            onChange={(e) => updatePackage(idx, "price_per_unit", e.target.value)}
+            onChange={(e) =>
+              updatePackage(idx, "price_per_unit", e.target.value)
+            }
           />
           <button
             type="button"
@@ -152,7 +213,11 @@ export default function PricePackages() {
       ))}
 
       <div className="mt-3 d-flex gap-2">
-        <button type="button" className="btn btn-outline-primary btn-sm" onClick={addPackage}>
+        <button
+          type="button"
+          className="btn btn-outline-primary btn-sm"
+          onClick={addPackage}
+        >
           + Add Package
         </button>
         <button

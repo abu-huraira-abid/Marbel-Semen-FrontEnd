@@ -2,8 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { FaTimes, FaSave } from "react-icons/fa";
 import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import Swal from "sweetalert2";
 
 export default function BullData() {
   const { id } = useParams();
@@ -11,6 +10,7 @@ export default function BullData() {
 
   const [formData, setFormData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false); // spinner for save
 
   // Fetch bull details
   useEffect(() => {
@@ -19,11 +19,7 @@ export default function BullData() {
         const token = localStorage.getItem("access_token");
         const response = await axios.get(
           `${import.meta.env.VITE_BASE_URL}/bulls/${id}/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
 
         if (response.data.success) {
@@ -38,7 +34,7 @@ export default function BullData() {
       } catch (error) {
         console.error("Error fetching bull:", error);
         setFormData(null);
-        toast.error("Failed to load bull details.");
+        Swal.fire("Error", "Failed to load bull details.", "error");
       } finally {
         setLoading(false);
       }
@@ -57,10 +53,20 @@ export default function BullData() {
   const handleSave = async (e) => {
     e.preventDefault();
 
+    const confirmResult = await Swal.fire({
+      title: "Update Bull?",
+      text: "Are you sure you want to update this bull?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, update it!",
+      cancelButtonText: "Cancel",
+    });
+
+    if (!confirmResult.isConfirmed) return;
+
     const token = localStorage.getItem("access_token");
     const formPayload = new FormData();
 
-    // Append fields except image + packages
     const fieldsToSend = [
       "name",
       "breed",
@@ -70,27 +76,22 @@ export default function BullData() {
       "weight",
       "semen_straws",
       "health_status",
-      "description", // ✅ added description
+      "description",
     ];
 
     fieldsToSend.forEach((field) => {
-      if (formData[field] !== undefined) {
-        formPayload.append(field, formData[field]);
-      }
+      if (formData[field] !== undefined) formPayload.append(field, formData[field]);
     });
 
-    // Append packages
     formPayload.append(
       "price_packages",
       JSON.stringify(formData.price_packages ?? [])
     );
 
-    // Append new image if exists
-    if (formData.new_image) {
-      formPayload.append("image", formData.new_image);
-    }
+    if (formData.new_image) formPayload.append("image", formData.new_image);
 
     try {
+      setSaving(true);
       const response = await axios.patch(
         `${import.meta.env.VITE_BASE_URL}/bulls/${id}/`,
         formPayload,
@@ -103,14 +104,16 @@ export default function BullData() {
       );
 
       if (response.data.success) {
-        toast.success("Bull updated successfully!");
-        setTimeout(() => {
-          navigate("/account/bulls");
-        }, 1500);
+        Swal.fire("Updated!", "Bull updated successfully.", "success");
+        setTimeout(() => navigate("/account/bulls"), 1000);
+      } else {
+        Swal.fire("Error", "Failed to update bull.", "error");
       }
     } catch (error) {
       console.error("Error updating bull:", error);
-      toast.error("Failed to update bull.");
+      Swal.fire("Error", "Failed to update bull.", "error");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -120,7 +123,6 @@ export default function BullData() {
 
   return (
     <div className="container py-4">
-      <ToastContainer position="top-right" autoClose={3000} />
       <h1 className="fw-bold mb-4" style={{ fontFamily: "Syne" }}>
         BULL DETAILS
       </h1>
@@ -231,7 +233,7 @@ export default function BullData() {
           </select>
         </div>
 
-        {/* ✅ Description */}
+        {/* Description */}
         <div className="mb-3">
           <label className="form-label">Description</label>
           <textarea
@@ -294,7 +296,16 @@ export default function BullData() {
           <button
             type="submit"
             className="btn btn-dark rounded-1 px-4 d-flex align-items-center gap-2"
+            disabled={saving}
           >
+            {saving && (
+              <span
+                className="spinner-border spinner-border-sm me-2"
+                role="status"
+              >
+                <span className="visually-hidden">Loading...</span>
+              </span>
+            )}
             <FaSave /> Save
           </button>
         </div>

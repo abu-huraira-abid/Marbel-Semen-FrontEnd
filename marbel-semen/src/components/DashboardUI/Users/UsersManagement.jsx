@@ -2,9 +2,11 @@ import { useState } from "react";
 import SideBar from "../SideBar";
 import UserTable from "./UserTable";
 import UserModal from "./UserModal"; // 👈 import modal
+import { useReducer } from "react";
 
 export default function UsersManagement() {
   const [showModal, setShowModal] = useState(false);
+  const [value,forceReducer] = useReducer(x => x+1 , 0)
 
   return (
     <>
@@ -28,12 +30,12 @@ export default function UsersManagement() {
               Add New User
             </button>
           </div>
-          <UserTable />
+          <UserTable value={value} />
         </div>
       </div>
 
       {/* Modal */}
-      <UserModal show={showModal} handleClose={() => setShowModal(false)} />
+      <UserModal show={showModal} forceReducer={forceReducer} handleClose={() => setShowModal(false)} />
     </>
   );
 }

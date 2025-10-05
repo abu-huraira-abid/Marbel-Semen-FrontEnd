@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
-import { FaTrash } from "react-icons/fa"; 
+import Swal from "sweetalert2";
+import { FaTrash } from "react-icons/fa";
 
 export default function OrderHistory() {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -9,6 +9,7 @@ export default function OrderHistory() {
   const [email, setEmail] = useState("");
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [canceling, setCanceling] = useState(null); // Track which order is being cancelled
 
   // ✅ Prefill email from localStorage
   useEffect(() => {
@@ -16,12 +17,17 @@ export default function OrderHistory() {
     if (savedEmail) setEmail(savedEmail);
   }, []);
 
-  // ✅ Fetch orders
+  // ✅ Fetch orders by email
   const fetchOrders = async () => {
     if (!email) {
-      toast.warning("Please enter an email to view orders.");
+      Swal.fire({
+        icon: "warning",
+        title: "Email Required",
+        text: "Please enter your email to view orders.",
+      });
       return;
     }
+
     setLoading(true);
     try {
       const res = await axios.get(
@@ -29,27 +35,59 @@ export default function OrderHistory() {
       );
       setOrders(res.data.data);
     } catch (err) {
-      toast.error("Failed to load orders. Please try again.");
+      Swal.fire({
+        icon: "error",
+        title: "Failed to Load Orders",
+        text: "Something went wrong. Please try again later.",
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ Cancel order
+  // ✅ Cancel order with confirmation
   const cancelOrder = async (id) => {
+    const confirm = await Swal.fire({
+      title: "Are you sure?",
+      text: "This order will be cancelled and cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, cancel it",
+      cancelButtonText: "No, keep it",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+    });
+
+    if (!confirm.isConfirmed) return;
+
     try {
+      setCanceling(id);
       await axios.patch(`${BASE_URL}/bulls/orders/${id}/`, {
         status: "cancelled",
       });
-      toast.success("Order cancelled successfully!");
-      fetchOrders(); // refresh list
+
+      Swal.fire({
+        icon: "success",
+        title: "Order Cancelled",
+        text: "Your order has been cancelled successfully.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      fetchOrders(); // Refresh list
     } catch (err) {
-      toast.error("Failed to cancel order.");
+      Swal.fire({
+        icon: "error",
+        title: "Failed to Cancel",
+        text: "There was an error cancelling the order. Please try again.",
+      });
+    } finally {
+      setCanceling(null);
     }
   };
 
   return (
-    <div className="container py-5">
+    <div className="container py-5" style={{ fontFamily: "Poppins" }}>
       <h1 className="mb-4 text-uppercase" style={{ fontFamily: "Syne" }}>
         Order History
       </h1>
@@ -66,8 +104,22 @@ export default function OrderHistory() {
           />
         </div>
         <div className="col-md-2 my-3 my-md-0">
-          <button onClick={fetchOrders} className="btn btn-primary text-nowrap">
-            Search History
+          <button
+            onClick={fetchOrders}
+            className="btn btn-primary text-nowrap px-4"
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <div
+                  className="spinner-border spinner-border-sm text-light me-2"
+                  role="status"
+                ></div>
+                Loading...
+              </>
+            ) : (
+              "Search History"
+            )}
           </button>
         </div>
       </div>
@@ -114,9 +166,8 @@ export default function OrderHistory() {
                           : order.status === "completed"
                           ? "bg-success"
                           : "bg-danger"
-                      }`
-                    }
-                    style={{width:"100px"}}
+                      }`}
+                      style={{ width: "100px" }}
                     >
                       {order.status}
                     </span>
@@ -126,8 +177,21 @@ export default function OrderHistory() {
                       <button
                         onClick={() => cancelOrder(order.id)}
                         className="btn btn-sm btn-danger rounded-1 d-flex align-items-center gap-1 px-4"
+                        disabled={canceling === order.id}
                       >
-                        <FaTrash /> Cancel
+                        {canceling === order.id ? (
+                          <>
+                            <div
+                              className="spinner-border spinner-border-sm text-light me-1"
+                              role="status"
+                            ></div>
+                            Cancelling...
+                          </>
+                        ) : (
+                          <>
+                            <FaTrash /> Cancel
+                          </>
+                        )}
                       </button>
                     ) : (
                       <span className="text-muted">----</span>

@@ -1,4 +1,7 @@
+import { useNavigate } from "react-router-dom";
+
 export default function Connect() {
+  const navigate = useNavigate()
   return (
     <>
       <div className="site-links-section py-5">
@@ -11,7 +14,7 @@ export default function Connect() {
             We want to hear from you! Please click the button below to Contact
             Us.
           </div>
-          <div className="btn btn-primary btn-lg rounded-1">Contact us</div>
+          <button className="btn btn-primary btn-lg rounded-1" onClick={()=> navigate('/contact-us')}>Contact us</button>
         </div>
       </div>
     </>

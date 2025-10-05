@@ -17,16 +17,8 @@ export default function Setting() {
                 className="my-3 text-center fw-bold"
                 style={{ fontFamily: "Syne" }}
               >
-                Settings
+                Profile Settings
               </h1>
-            </div>
-            <div className="d-flex flex-column flex-lg-row justify-content-between align-items-center my-4 my-lg-0">
-              <h2
-                className="my-3 text-center fw-bold"
-                style={{ fontFamily: "Syne" }}
-              >
-                Settings
-              </h2> 
             </div>
             <div className="row">
                 <div className="col-12 col-md-6">

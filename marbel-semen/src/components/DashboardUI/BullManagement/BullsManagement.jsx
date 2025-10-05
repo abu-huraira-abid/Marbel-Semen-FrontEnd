@@ -2,14 +2,16 @@ import { useState } from "react";
 import SideBar from "../SideBar";
 import AddBullModal from "./AddBullModal";
 import BullTable from "./BullTable";
+import { useReducer } from "react";
 
 export default function BullsManagement() {
   const [showModal, setShowModal] = useState(false);
+  const [value,forceReducer] = useReducer(x => x+1 , 0)
 
   // When user saves a bull from modal
   const handleSaveBull = (bull) => {
     console.log("New bull added:", bull);
-    // later we can send this to BullTable or backend API
+    forceReducer()
     setShowModal(false);
   };
 
@@ -37,7 +39,7 @@ export default function BullsManagement() {
               </button>
             </div>
 
-            <BullTable />
+            <BullTable value={value} />
 
             {/* Modal */}
             <AddBullModal

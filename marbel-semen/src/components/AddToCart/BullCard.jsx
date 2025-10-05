@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 export default function BullCard({ id }) {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   const [bull, setBull] = useState(null);
   const [quantity, setQuantity] = useState(1);
-  const [alert, setAlert] = useState(""); // success/warning alerts
-  const [error, setError] = useState(""); // field error
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchBull = async () => {
@@ -16,6 +16,12 @@ export default function BullCard({ id }) {
         setBull(res.data.data);
       } catch (err) {
         console.error("Error fetching bull:", err);
+        Swal.fire({
+          icon: "error",
+          title: "Failed to Load Bull",
+          text: "Something went wrong while fetching bull details.",
+          confirmButtonColor: "#d33",
+        });
       }
     };
     if (id) fetchBull();
@@ -24,6 +30,12 @@ export default function BullCard({ id }) {
   const handleAddToCart = () => {
     if (quantity > bull.quantity) {
       setError(`Only ${bull.quantity} units available!`);
+      Swal.fire({
+        icon: "warning",
+        title: "Limited Stock",
+        text: `Only ${bull.quantity} units are available.`,
+        confirmButtonColor: "#f0ad4e",
+      });
       return;
     }
 
@@ -38,10 +50,16 @@ export default function BullCard({ id }) {
 
     localStorage.setItem("cart", JSON.stringify(cart));
 
-    setAlert(`${bull.name} added to cart successfully!`);
-    setError("");
+    // ✅ SweetAlert success popup
+    Swal.fire({
+      icon: "success",
+      title: "Added to Cart",
+      text: `${bull.name} added to cart successfully!`,
+      showConfirmButton: false,
+      timer: 2000,
+    });
 
-    setTimeout(() => setAlert(""), 3000);
+    setError("");
   };
 
   const renderStockBadge = () => {
@@ -77,14 +95,6 @@ export default function BullCard({ id }) {
   return (
     <div className="container-fluid bg-light py-5" style={{ fontFamily: "Poppins" }}>
       <div className="container">
-        {/* Success Alert */}
-        {alert && (
-          <div className="alert alert-success alert-dismissible fade show" role="alert">
-            {alert}
-            <button type="button" className="btn-close" onClick={() => setAlert("")}></button>
-          </div>
-        )}
-
         <div className="row">
           {/* Image */}
           <div className="col-12 col-lg-6">

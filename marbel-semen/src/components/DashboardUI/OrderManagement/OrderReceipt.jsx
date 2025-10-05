@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaTimes, FaSave } from "react-icons/fa";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const statusOptions = [
   { value: "pending", label: "Pending" },
@@ -9,10 +10,12 @@ const statusOptions = [
   { value: "cancelled", label: "Cancelled" },
 ];
 
-export default function OrderReceipt({ show, handleClose, order,forceReducer }) {
+export default function OrderReceipt({ show, handleClose, order, forceReducer }) {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
+  const token = localStorage.getItem("access_token");
+
   const [status, setStatus] = useState(order?.status || "");
-  const [alert, setAlert] = useState({ show: false, type: "", message: "" });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setStatus(order?.status || "");
@@ -20,28 +23,45 @@ export default function OrderReceipt({ show, handleClose, order,forceReducer }) 
 
   if (!order) return null;
 
-  // Handle modal close by clicking backdrop
+  // ✅ Show SweetAlert popups
+  const showAlert = (type, message) => {
+    const config = {
+      title:
+        type === "success"
+          ? "Success"
+          : type === "error"
+          ? "Error"
+          : "Info",
+      text: message,
+      icon: type,
+      confirmButtonColor: type === "success" ? "#198754" : "#dc3545",
+      timer: 2500,
+      showConfirmButton: false,
+    };
+    Swal.fire(config);
+  };
+
+  // ✅ Close modal when clicking backdrop
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) handleClose();
   };
 
-  // 🔥 Update status API call
+  // ✅ Update order status via API
   const handleSaveStatus = async () => {
     try {
-      await axios.patch(`${BASE_URL}/bulls/orders/${order.id}/`, { status });
-      forceReducer()
-      setAlert({
-        show: true,
-        type: "success",
-        message: "✅ Order status updated successfully!",
-      });
+      setLoading(true);
+      await axios.patch(
+        `${BASE_URL}/bulls/orders/${order.id}/`,
+        { status },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      forceReducer();
+      showAlert("success", "Order status updated successfully!");
     } catch (error) {
       console.error("Error updating order status:", error);
-      setAlert({
-        show: true,
-        type: "danger",
-        message: "❌ Failed to update order status!",
-      });
+      showAlert("error", "Failed to update order status!");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,7 +76,9 @@ export default function OrderReceipt({ show, handleClose, order,forceReducer }) 
         <div className="modal-content">
           {/* Header */}
           <div className="modal-header">
-            <h5 className="modal-title">Order Details - #{order.id}</h5>
+            <h5 className="modal-title" style={{ fontFamily: "Syne" }}>
+              Order Details - #{order.id}
+            </h5>
             <button
               type="button"
               className="btn-close"
@@ -67,48 +89,20 @@ export default function OrderReceipt({ show, handleClose, order,forceReducer }) 
 
           {/* Body */}
           <div className="modal-body">
-            {/* Bootstrap Alert */}
-            {alert.show && (
-              <div
-                className={`alert alert-${alert.type} alert-dismissible fade show`}
-                role="alert"
-              >
-                {alert.message}
-                <button
-                  type="button"
-                  className="btn-close"
-                  aria-label="Close"
-                  onClick={() => setAlert({ show: false, type: "", message: "" })}
-                ></button>
-              </div>
-            )}
-
             {/* Customer Info */}
             <div className="mb-4">
               <h5>Customer Info</h5>
-              <p>
-                <strong>Name:</strong> {order.name}
-              </p>
-              <p>
-                <strong>Email:</strong> {order.email}
-              </p>
-              <p>
-                <strong>Phone:</strong> {order.phone}
-              </p>
-              <p>
-                <strong>Address:</strong> {order.address || "N/A"}
-              </p>
+              <p><strong>Name:</strong> {order.name}</p>
+              <p><strong>Email:</strong> {order.email}</p>
+              <p><strong>Phone:</strong> {order.phone}</p>
+              <p><strong>Address:</strong> {order.address || "N/A"}</p>
             </div>
 
             {/* Bull Info */}
             <div className="mb-4">
               <h5>Bull Info</h5>
-              <p>
-                <strong>Bull Name:</strong> {order.bull_name}
-              </p>
-              <p>
-                <strong>Bull ID:</strong> {order.bull}
-              </p>
+              <p><strong>Bull Name:</strong> {order.bull_name}</p>
+              <p><strong>Bull ID:</strong> {order.bull}</p>
             </div>
 
             {/* Order Summary */}
@@ -132,7 +126,7 @@ export default function OrderReceipt({ show, handleClose, order,forceReducer }) 
               </table>
             </div>
 
-            {/* Update Status */}
+            {/* Status Update */}
             <div className="mb-3">
               <label className="form-label fw-bold">Update Order Status</label>
               <select
@@ -151,11 +145,20 @@ export default function OrderReceipt({ show, handleClose, order,forceReducer }) 
 
           {/* Footer */}
           <div className="modal-footer">
-            <button className="btn btn-secondary" onClick={handleClose}>
+            <button
+              className="btn btn-secondary"
+              onClick={handleClose}
+              disabled={loading}
+            >
               <FaTimes className="me-2" /> Close
             </button>
-            <button className="btn btn-success" onClick={handleSaveStatus}>
-              <FaSave className="me-2" /> Save Status
+            <button
+              className="btn btn-success"
+              onClick={handleSaveStatus}
+              disabled={loading}
+            >
+              <FaSave className="me-2" />
+              {loading ? "Saving..." : "Save Status"}
             </button>
           </div>
         </div>

@@ -1,7 +1,9 @@
 import MainImg from '../../assets/media/Landingpage.png'
 import "../../../src/assets/styles/LandingPage.css"
+import { useNavigate } from 'react-router-dom';
 
 export default function FirstCard() {
+  const navigate = useNavigate()
   return (
     <>
     <div id="carouselExampleCaptions" className="carousel slide carousel-dark" data-bs-ride="carousel"
@@ -35,7 +37,7 @@ export default function FirstCard() {
           />
         </div>
         <div className="button-shadow p-2">
-          <button className="btn btn-primary rounded-1 btn-lg">
+          <button className="btn btn-primary rounded-1 btn-lg" onClick={()=> navigate('/bull-battery')}>
             BULL BATTERY
           </button>
         </div>

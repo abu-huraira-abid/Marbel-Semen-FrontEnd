@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 import {
   FaUser,
   FaPhone,
@@ -16,8 +17,7 @@ export default function Checkout() {
   const [bulls, setBulls] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [alert, setAlert] = useState({ type: "", message: "" });
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -26,7 +26,7 @@ export default function Checkout() {
     address: "",
   });
 
-  // Load cart + fetch bulls
+  // ✅ Load cart and fetch bull details
   useEffect(() => {
     const fetchBulls = async () => {
       const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -45,9 +45,11 @@ export default function Checkout() {
         setBulls(bullData);
       } catch (err) {
         console.error("Error fetching bull data:", err);
-        setAlert({
-          type: "danger",
-          message: "Failed to load bulls. Please try again.",
+        Swal.fire({
+          icon: "error",
+          title: "Failed to Load Bulls",
+          text: "Unable to load bulls. Please try again.",
+          confirmButtonColor: "#d33",
         });
       } finally {
         setLoading(false);
@@ -57,22 +59,13 @@ export default function Checkout() {
     fetchBulls();
   }, [BASE_URL]);
 
-  // Auto-hide alert after 2 seconds
-  useEffect(() => {
-    if (alert.message) {
-      const timer = setTimeout(() => {
-        setAlert({ type: "", message: "" });
-      }, 2000); // 2 seconds
-
-      return () => clearTimeout(timer);
-    }
-  }, [alert]);
-
+  // ✅ Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // ✅ Calculate unit price based on quantity and package
   const getPricePerUnit = (bull) => {
     if (!bull.price_packages || bull.price_packages.length === 0) return 0;
 
@@ -91,10 +84,10 @@ export default function Checkout() {
   const calculateSubtotal = (bull) => getPricePerUnit(bull) * bull.qty;
   const total = bulls.reduce((sum, bull) => sum + calculateSubtotal(bull), 0);
 
+  // ✅ Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-    setAlert({ type: "", message: "" });
 
     try {
       await Promise.all(
@@ -116,7 +109,14 @@ export default function Checkout() {
         })
       );
 
-      setAlert({ type: "success", message: "Order submitted successfully!" });
+      Swal.fire({
+        icon: "success",
+        title: "Order Submitted",
+        text: "Your order has been placed successfully!",
+        showConfirmButton: false,
+        timer: 2000,
+      });
+
       localStorage.removeItem("cart");
       localStorage.setItem("user_email", formData.email);
       setCart([]);
@@ -124,15 +124,19 @@ export default function Checkout() {
       setFormData({ name: "", phone: "", email: "", address: "" });
     } catch (err) {
       console.error("Order submission failed:", err);
-      setAlert({
-        type: "danger",
-        message: "Failed to submit order. Please try again.",
+
+      Swal.fire({
+        icon: "error",
+        title: "Submission Failed",
+        text: "There was an error submitting your order. Please try again.",
+        confirmButtonColor: "#d33",
       });
     } finally {
       setSubmitting(false);
     }
   };
 
+  // ✅ Loading state
   if (loading)
     return (
       <div className="text-center py-5">
@@ -141,6 +145,7 @@ export default function Checkout() {
       </div>
     );
 
+  // ✅ Empty cart
   if (bulls.length === 0) {
     return (
       <div className="text-center py-5">
@@ -155,26 +160,13 @@ export default function Checkout() {
     );
   }
 
+  // ✅ Checkout Page
   return (
     <div className="container py-5" style={{ fontFamily: "Poppins" }}>
       <h2 className="mb-4">Checkout</h2>
 
-      {alert.message && (
-        <div
-          className={`alert alert-${alert.type} alert-dismissible fade show`}
-          role="alert"
-        >
-          {alert.message}
-          <button
-            type="button"
-            className="btn-close"
-            onClick={() => setAlert({ type: "", message: "" })}
-          ></button>
-        </div>
-      )}
-
       <div className="row">
-        {/* Customer Form */}
+        {/* 🧾 Customer Form */}
         <div className="col-lg-6 mb-4">
           <div className="card shadow-sm p-4">
             <h5 className="mb-3">Customer Details</h5>
@@ -239,10 +231,13 @@ export default function Checkout() {
                   disabled={submitting}
                 ></textarea>
               </div>
+
+              {/* ✅ Spinner in Submit Button */}
               <button
                 type="submit"
                 className="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2"
                 disabled={submitting}
+                style={{ height: "45px" }}
               >
                 {submitting ? (
                   <>
@@ -250,7 +245,7 @@ export default function Checkout() {
                       className="spinner-border spinner-border-sm text-light"
                       role="status"
                     ></div>
-                    <span>Submitting...</span>
+                    <span>Processing...</span>
                   </>
                 ) : (
                   <>
@@ -262,7 +257,7 @@ export default function Checkout() {
           </div>
         </div>
 
-        {/* Order Summary */}
+        {/* 💳 Order Summary */}
         <div className="col-lg-6">
           <div className="card shadow-sm p-4">
             <h5 className="mb-3">Order Summary</h5>

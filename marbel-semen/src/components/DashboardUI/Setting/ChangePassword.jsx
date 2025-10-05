@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const ChangePassword = () => {
-  const BASE_URL = import.meta.env.VITE_BASE_URL; // ✅ http://127.0.0.1:8000/api
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   const [formData, setFormData] = useState({
     old_password: "",
@@ -22,7 +23,6 @@ const ChangePassword = () => {
   const [passwordsMatch, setPasswordsMatch] = useState(false);
 
   useEffect(() => {
-    // ✅ Realtime validation for matching passwords
     setPasswordsMatch(
       formData.new_password.length > 0 &&
         formData.new_password === formData.confirm_password
@@ -45,55 +45,94 @@ const ChangePassword = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!passwordsMatch) {
-    toast.error("New password and confirm password do not match!");
-    return;
-  }
-
-  try {
-    const response = await axios.post(
-      `${BASE_URL}/accounts/change-password/`, 
-      {
-        old_password: formData.old_password,
-        new_password: formData.new_password,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      }
-    );
-    toast.success("Password updated successfully!");
-    setFormData({ old_password: "", new_password: "", confirm_password: "" });
-  } catch (error) {
-    console.error("Error changing password:", error);
-
-    // Handle different error cases based on status code
-    if (error.response) {
-      const { status, data } = error.response;
-      
-      if (status === 400) {
-        // Validation or bad request error
-        toast.error(data.error || "Failed to change password. Please check your old password.");
-      } else if (status === 401) {
-        // Unauthorized error (e.g. invalid token)
-        toast.error("Unauthorized. Please log in again.");
-      } else if (status === 500) {
-        // Server error
-        toast.error("Something went wrong. Please try again later.");
-      } else {
-        // Generic error
-        toast.error("An error occurred. Please try again.");
-      }
-    } else {
-      // Network error or no response
-      toast.error("Network error. Please check your internet connection.");
+    if (!passwordsMatch) {
+      toast.error("New password and confirm password do not match!");
+      return;
     }
-  }
-};
 
+    // 🔹 Confirmation before updating password
+    const confirmResult = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to change your password?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, change it!",
+      cancelButtonText: "Cancel",
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+    });
+
+    if (!confirmResult.isConfirmed) return;
+
+    try {
+      await axios.post(
+        `${BASE_URL}/accounts/change-password/`,
+        {
+          old_password: formData.old_password,
+          new_password: formData.new_password,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      Swal.fire({
+        icon: "success",
+        title: "Password Updated!",
+        text: "Your password has been changed successfully.",
+        confirmButtonColor: "#3085d6",
+      });
+
+      setFormData({ old_password: "", new_password: "", confirm_password: "" });
+    } catch (error) {
+      console.error("Error changing password:", error);
+
+      if (error.response) {
+        const { status, data } = error.response;
+
+        if (status === 400) {
+          Swal.fire({
+            icon: "error",
+            title: "Invalid Input",
+            text: data.error || "Old password is incorrect.",
+            confirmButtonColor: "#d33",
+          });
+        } else if (status === 401) {
+          Swal.fire({
+            icon: "error",
+            title: "Unauthorized",
+            text: "Please log in again.",
+            confirmButtonColor: "#d33",
+          });
+        } else if (status === 500) {
+          Swal.fire({
+            icon: "error",
+            title: "Server Error",
+            text: "Something went wrong. Please try again later.",
+            confirmButtonColor: "#d33",
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "An unexpected error occurred.",
+            confirmButtonColor: "#d33",
+          });
+        }
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Network Error",
+          text: "Please check your internet connection.",
+          confirmButtonColor: "#d33",
+        });
+      }
+    }
+  };
 
   return (
     <div className="container mt-5 p-4 m-4 border rounded-4 bg-light shadow-lg">
@@ -173,7 +212,6 @@ const ChangePassword = () => {
             </button>
           </div>
 
-          {/* ✅ Live feedback */}
           {formData.confirm_password && (
             <small
               className={`d-block mt-2 ${

@@ -1,9 +1,8 @@
 import { useState } from "react";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import LoginApi from "./utils/LoginApi"; 
+import Swal from "sweetalert2";
+import LoginApi from "./utils/LoginApi";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -24,10 +23,21 @@ export default function Login() {
     const res = await LoginApi(formData);
 
     if (res.success) {
-      toast.success("Login successful!", { position: "top-right" });
-      setTimeout(() => navigate("/account/dashboard"), 1500)
+      Swal.fire({
+        icon: "success",
+        title: "Login Successful",
+        text: "You will be redirected shortly...",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      setTimeout(() => navigate("/account/dashboard"), 1500);
     } else {
-      toast.error(res.message || "Login failed!", { position: "top" });
+      Swal.fire({
+        icon: "error",
+        title: "Login Failed",
+        text: res.message || "Invalid email or password. Please try again.",
+        confirmButtonColor: "#d33",
+      });
     }
 
     setLoading(false);
@@ -35,7 +45,7 @@ export default function Login() {
 
   return (
     <div className="d-flex justify-content-center align-items-center my-2 my-lg-0">
-      <div className="container d-flex flex-column shadow p-5 bg-white rounded">
+      <div className="container d-flex flex-column shadow p-5 bg-white rounded" style={{ maxWidth: "500px" }}>
         <h1 className="my-2 text-center" style={{ fontFamily: "Syne" }}>
           My Account
         </h1>
@@ -111,9 +121,6 @@ export default function Login() {
           </div>
         </form>
       </div>
-
-      {/* Toast Container */}
-      <ToastContainer />
     </div>
   );
 }

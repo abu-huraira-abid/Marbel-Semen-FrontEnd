@@ -9,10 +9,10 @@ export default function SiteLinks() {
         <h2 className="mb-4"style={{fontFamily:"Syne"}}>Site Links</h2>
         <div className="border border-primary"></div>
         <ul className="site-links list-unstyled" style={{fontFamily:"Poppins"}}>
-          <li>
+          <li onClick={()=> navigate('/bull-battery')}>
             <a href="#">Bull Battery</a>
           </li>
-          <li>
+          <li onClick={()=> navigate('/process')}>
             <a href="#">The Process</a>
           </li>
           <li>

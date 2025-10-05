@@ -1,15 +1,14 @@
 import React, { useState } from "react";
 import { FaTimes, FaSave } from "react-icons/fa";
-import axios from "axios";
-import { toast } from "react-toastify"; // ✅ import toast
+import Swal from "sweetalert2";
 import API from "../../Register/utils/Api";
 
-export default function UserModal({ show, handleClose }) {
+export default function UserModal({ show, handleClose,forceReducer }) {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
-    role: "staff", // default role
+    role: "customer",
   });
 
   const [loading, setLoading] = useState(false);
@@ -40,24 +39,34 @@ export default function UserModal({ show, handleClose }) {
         }
       );
 
-      toast.success("User created successfully!"); // ✅ success notification
+      Swal.fire({
+        icon: "success",
+        title: "Success!",
+        text: "User created successfully!",
+        timer: 2000,
+        showConfirmButton: false,
+      });
 
-      // reset form after success
+      // Reset form after success
       setFormData({
         username: "",
         email: "",
         password: "",
-        role: "staff",
+        role: "customer",
       });
 
-      handleClose(); // close modal
+      forceReducer()
+      handleClose(); 
     } catch (error) {
       console.error("Error creating user:", error.response?.data || error);
 
-      toast.error(
-        error.response?.data?.detail ||
-          "Failed to create user. Please try again."
-      );
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text:
+          error.response?.data?.detail ||
+          "Failed to create user. Please try again.",
+      });
     } finally {
       setLoading(false);
     }
@@ -144,7 +153,6 @@ export default function UserModal({ show, handleClose }) {
                     className="form-select"
                   >
                     <option value="admin">Admin</option>
-                    <option value="staff">Staff</option>
                     <option value="customer">Customer</option>
                   </select>
                 </div>

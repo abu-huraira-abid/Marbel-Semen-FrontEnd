@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -10,8 +11,8 @@ const ProfileUpdate = () => {
     email: "",
   });
 
-  const BASE_URL = import.meta.env.VITE_BASE_URL; // Access the VITE_BASE_URL from the environment variables
-  const token = localStorage.getItem("access_token"); // Or use sessionStorage
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
+  const token = localStorage.getItem("access_token");
 
   useEffect(() => {
     axios
@@ -25,7 +26,12 @@ const ProfileUpdate = () => {
       })
       .catch((error) => {
         console.error("Error fetching profile data:", error);
-        toast.error("Failed to load profile. Please try again.");
+        Swal.fire({
+          icon: "error",
+          title: "Failed to Load Profile",
+          text: "Please try again.",
+          confirmButtonColor: "#3085d6",
+        });
       });
   }, [BASE_URL, token]);
 
@@ -37,8 +43,23 @@ const ProfileUpdate = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // 🔹 Ask for confirmation before updating
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to update your profile details?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, update it!",
+      cancelButtonText: "Cancel",
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+    });
+
+    if (!result.isConfirmed) return; // Stop if user cancels
+
     axios
       .patch(`${BASE_URL}/accounts/users/profile/`, userData, {
         headers: {
@@ -46,11 +67,21 @@ const ProfileUpdate = () => {
         },
       })
       .then(() => {
-        toast.success("Profile updated successfully!");
+        Swal.fire({
+          icon: "success",
+          title: "Profile Updated!",
+          text: "Your profile has been successfully updated.",
+          confirmButtonColor: "#3085d6",
+        });
       })
       .catch((error) => {
         console.error("Error updating profile:", error);
-        toast.error("Failed to update profile.");
+        Swal.fire({
+          icon: "error",
+          title: "Update Failed",
+          text: "Something went wrong. Please try again.",
+          confirmButtonColor: "#d33",
+        });
       });
   };
 
