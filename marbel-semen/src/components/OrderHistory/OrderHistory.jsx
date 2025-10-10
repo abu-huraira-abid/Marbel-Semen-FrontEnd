@@ -31,7 +31,7 @@ export default function OrderHistory() {
     setLoading(true);
     try {
       const res = await axios.get(
-        `${BASE_URL}/bulls/orders/by-email/?email=${email}`
+        `${BASE_URL}/orders/by-email/?email=${email}`
       );
       setOrders(res.data.data);
     } catch (err) {
@@ -62,7 +62,7 @@ export default function OrderHistory() {
 
     try {
       setCanceling(id);
-      await axios.patch(`${BASE_URL}/bulls/orders/${id}/`, {
+      await axios.patch(`${BASE_URL}/orders/${id}/`, {
         status: "cancelled",
       });
 
@@ -139,7 +139,6 @@ export default function OrderHistory() {
           <table className="table table-bordered table-striped align-middle">
             <thead className="table-dark">
               <tr>
-                <th>Name</th>
                 <th>Bull Name</th>
                 <th>Date</th>
                 <th>Quantity</th>
@@ -151,7 +150,6 @@ export default function OrderHistory() {
             <tbody>
               {orders.map((order) => (
                 <tr key={order.id}>
-                  <td>{order.name}</td>
                   <td>{order.bull_name}</td>
                   <td>{new Date(order.created_at).toLocaleDateString()}</td>
                   <td>{order.quantity}</td>

@@ -22,6 +22,7 @@ export default function Login() {
 
     const res = await LoginApi(formData);
 
+    // console.log(res.data)
     if (res.success) {
       Swal.fire({
         icon: "success",
@@ -30,7 +31,7 @@ export default function Login() {
         showConfirmButton: false,
         timer: 1500,
       });
-      setTimeout(() => navigate("/account/dashboard"), 1500);
+      res.data.user.role == 'admin' ? setTimeout(() => navigate("/account/dashboard"), 1500) : setTimeout(() => navigate("/account/user/dashboard"), 1500)
     } else {
       Swal.fire({
         icon: "error",

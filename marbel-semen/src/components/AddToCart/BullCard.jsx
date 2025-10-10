@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 
 export default function BullCard({ id }) {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
+  const navigate = useNavigate();
 
   const [bull, setBull] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [error, setError] = useState("");
+  const [wishlistLoading, setWishlistLoading] = useState(false);
 
   useEffect(() => {
     const fetchBull = async () => {
@@ -27,6 +30,80 @@ export default function BullCard({ id }) {
     if (id) fetchBull();
   }, [id, BASE_URL]);
 
+  // ✅ Reusable SWAL login form
+  const showLoginModal = async () => {
+    return Swal.fire({
+      title: "Login Required",
+      html: `
+        <style>
+          .swal2-input {
+            width: 90% !important;
+            padding: 8px 10px !important;
+            font-size: 15px !important;
+          }
+        </style>
+        <input type="email" id="email" class="swal2-input" placeholder="Enter your email">
+        <input type="password" id="password" class="swal2-input" placeholder="Enter your password">
+        <p style="margin-top: 10px; font-size: 14px;">Don't have an account? 
+          <a id="registerLink" href="#" style="color:#3085d6; text-decoration: underline;">Register</a>
+        </p>
+      `,
+      confirmButtonText: "Login",
+      focusConfirm: false,
+      didOpen: () => {
+        const registerLink = document.getElementById("registerLink");
+        if (registerLink) {
+          registerLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            Swal.close();
+            navigate("/account");
+          });
+        }
+      },
+      preConfirm: () => {
+        const email = Swal.getPopup().querySelector("#email").value;
+        const password = Swal.getPopup().querySelector("#password").value;
+        if (!email || !password) {
+          Swal.showValidationMessage(`Please enter both email and password`);
+        }
+        return { email, password };
+      },
+    });
+  };
+
+  // ✅ Login via SWAL and store new token
+  const handleLoginAndRetry = async (callback) => {
+    const result = await showLoginModal();
+    if (result.isConfirmed) {
+      try {
+        const { email, password } = result.value;
+        const res = await axios.post(`${BASE_URL}/auth/login/`, {
+          email,
+          password,
+        });
+        localStorage.setItem("accessToken", res.data.access);
+
+        Swal.fire({
+          icon: "success",
+          title: "Login Successful",
+          text: "You can now continue your action.",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+
+        if (callback) callback(); // retry wishlist addition automatically
+      } catch (err) {
+        Swal.fire({
+          icon: "error",
+          title: "Login Failed",
+          text: "Invalid email or password.",
+          confirmButtonColor: "#d33",
+        });
+      }
+    }
+  };
+
+  // ✅ Add to Cart (localStorage)
   const handleAddToCart = () => {
     if (quantity > bull.quantity) {
       setError(`Only ${bull.quantity} units available!`);
@@ -50,7 +127,6 @@ export default function BullCard({ id }) {
 
     localStorage.setItem("cart", JSON.stringify(cart));
 
-    // ✅ SweetAlert success popup
     Swal.fire({
       icon: "success",
       title: "Added to Cart",
@@ -62,6 +138,55 @@ export default function BullCard({ id }) {
     setError("");
   };
 
+  // ✅ Add to Wishlist (with re-login if token invalid)
+  const handleAddToWishlist = async () => {
+    let token = localStorage.getItem("accessToken");
+
+    if (!token) {
+      await handleLoginAndRetry(() => handleAddToWishlist());
+      return;
+    }
+
+    try {
+      setWishlistLoading(true);
+      await axios.post(
+        `${BASE_URL}/wishlist/`,
+        { bull: id },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      Swal.fire({
+        icon: "success",
+        title: "Added to Wishlist!",
+        text: `${bull.name} has been added to your wishlist.`,
+        showConfirmButton: false,
+        timer: 2000,
+      });
+    } catch (error) {
+      console.error("Error adding to wishlist:", error);
+
+      // 🔁 If token expired or invalid → remove & re-login via SWAL
+      if (error.response?.status === 401) {
+        localStorage.removeItem("accessToken");
+        await handleLoginAndRetry(() => handleAddToWishlist());
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Failed",
+          text:
+            error.response?.data?.bull ||
+            "Could not add to wishlist. Please try again.",
+          confirmButtonColor: "#d33",
+        });
+      }
+    } finally {
+      setWishlistLoading(false);
+    }
+  };
+
+  // 🧾 Stock Badge Renderer
   const renderStockBadge = () => {
     if (bull.quantity === 0) {
       return (
@@ -106,12 +231,12 @@ export default function BullCard({ id }) {
             <div className="display-5 fw-light" style={{ fontFamily: "Syne" }}>
               {bull.name}
             </div>
+
             <div className="my-2 fs-5">
               <span className="fs-3 text-success">Breed: </span>
               {bull.breed}
             </div>
 
-            {/* Price Packages */}
             <div className="my-2 fs-5">
               <span className="fs-3 text-primary">Price: </span>
               {bull.price_packages && bull.price_packages.length > 0 ? (
@@ -129,11 +254,9 @@ export default function BullCard({ id }) {
             </div>
 
             <div className="my-2 fs-5 text-danger">REG # {bull.registration_id}</div>
-
-            {/* Stock Status */}
             <div className="my-2">{renderStockBadge()}</div>
 
-            {/* Quantity + Add to Cart */}
+            {/* Quantity + Buttons */}
             <div className="d-flex align-items-center gap-2 mt-3">
               <input
                 type="number"
@@ -157,9 +280,23 @@ export default function BullCard({ id }) {
               >
                 <i className="bi bi-cart-plus me-1"></i> Add
               </button>
+              <button
+                className="btn btn-warning rounded-1 text-nowrap"
+                onClick={handleAddToWishlist}
+                disabled={wishlistLoading}
+              >
+                {wishlistLoading ? (
+                  <>
+                    <i className="bi bi-heart me-1"></i> Adding...
+                  </>
+                ) : (
+                  <>
+                    <i className="bi bi-heart me-1"></i> Add to Wishlist
+                  </>
+                )}
+              </button>
             </div>
 
-            {/* Input error message */}
             {error && <div className="invalid-feedback d-block">{error}</div>}
           </div>
         </div>

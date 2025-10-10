@@ -23,6 +23,9 @@ import CheckoutStructure from "./components/Checkout/CheckoutStructure";
 import OrderHistoryStructure from "./components/OrderHistory/OrderHistoryStructure";
 import Process from "./components/Process/Process";
 import BullInventory from "./components/DashboardUI/BullInventory/BullInvetory";
+import UserDashboard from "./components/UserDashboard/Dashboard.jsx/UserDashboard";
+import UserOrderHistory from "./components/UserDashboard/OrderHistory/UserOrderHistory";
+import UserSetting from "./components/UserDashboard/Setting/Setting";
 
 export default function App() {
   return (
@@ -49,6 +52,9 @@ export default function App() {
         <Route path="/checkout" element={<CheckoutStructure />} />
         <Route path="/order-history" element={<OrderHistoryStructure />} />
         <Route path="/process" element={<Process />} />
+        <Route path="/account/user/dashboard" element={<UserDashboard />} />
+        <Route path="/account/user/order-history" element={<UserOrderHistory />} />
+        <Route path="/account/user/settings" element={<UserSetting />} />
       </Routes>
 
       {/* 🔥 Toast container must be mounted once */}

@@ -1,18 +1,18 @@
 import { useState } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,12 +20,16 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
+    setLoading(true);
 
     // Password confirmation check
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+      Swal.fire({
+        icon: "error",
+        title: "Passwords do not match",
+        text: "Please make sure both passwords are the same.",
+      });
+      setLoading(false);
       return;
     }
 
@@ -44,16 +48,30 @@ export default function Register() {
         }
       );
 
-      setSuccess("Registration successful!");
+      Swal.fire({
+        icon: "success",
+        title: "Registration Successful!",
+        text: "Your account has been created successfully.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
       setFormData({ username: "", email: "", password: "", confirmPassword: "" });
     } catch (err) {
+      let message = "Something went wrong. Please try again.";
+
       if (err.response && err.response.data) {
-        // Handles DRF error format
         const detail = err.response.data.detail || JSON.stringify(err.response.data);
-        setError(detail);
-      } else {
-        setError("Something went wrong. Please try again.");
+        message = detail;
       }
+
+      Swal.fire({
+        icon: "error",
+        title: "Registration Failed",
+        text: message,
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -63,9 +81,6 @@ export default function Register() {
         <h1 className="my-2 text-center" style={{ fontFamily: "Syne" }}>
           Register Account
         </h1>
-
-        {error && <div className="alert alert-danger">{error}</div>}
-        {success && <div className="alert alert-success">{success}</div>}
 
         <form onSubmit={handleSubmit}>
           {/* Username */}
@@ -150,8 +165,23 @@ export default function Register() {
 
           {/* Register Button */}
           <div className="text-center">
-            <button type="submit" className="btn btn-lg btn-outline-primary my-3 rounded-0 px-5">
-              Register
+            <button
+              type="submit"
+              className="btn btn-lg btn-outline-primary my-3 rounded-0 px-5"
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                  Registering...
+                </>
+              ) : (
+                "Register"
+              )}
             </button>
           </div>
         </form>

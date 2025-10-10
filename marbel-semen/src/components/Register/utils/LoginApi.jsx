@@ -7,10 +7,14 @@ export default async function LoginApi(data) {
       password: data.password,
     });
 
+    // console.log(response.data)
     // Save tokens & email in localStorage
     localStorage.setItem("access_token", response.data.access);
     localStorage.setItem("refresh_token", response.data.refresh);
-    localStorage.setItem("userEmail", data.email);
+    localStorage.setItem("userId", response.data.user.id);
+    localStorage.setItem("userEmail", response.data.user.email);
+    localStorage.setItem("username", response.data.user.username);
+    localStorage.setItem("userRole", response.data.user.role);
 
     return { success: true, data: response.data };
   } catch (error) {
