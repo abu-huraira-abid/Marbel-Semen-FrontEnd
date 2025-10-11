@@ -26,6 +26,7 @@ import BullInventory from "./components/DashboardUI/BullInventory/BullInvetory";
 import UserDashboard from "./components/UserDashboard/Dashboard.jsx/UserDashboard";
 import UserOrderHistory from "./components/UserDashboard/OrderHistory/UserOrderHistory";
 import UserSetting from "./components/UserDashboard/Setting/Setting";
+import MyWishList from './components/UserDashboard/MyWishList/MyWishList'
 
 export default function App() {
   return (
@@ -55,6 +56,7 @@ export default function App() {
         <Route path="/account/user/dashboard" element={<UserDashboard />} />
         <Route path="/account/user/order-history" element={<UserOrderHistory />} />
         <Route path="/account/user/settings" element={<UserSetting />} />
+        <Route path="/account/user/wishlist" element={<MyWishList />} />
       </Routes>
 
       {/* 🔥 Toast container must be mounted once */}

@@ -50,7 +50,7 @@ export default function SideBar() {
   const menuItems = [
     { name: "Dashboard", icon: <FaHome />, path: "/account/user/dashboard" },
     { name: "Order History", icon: <FaShoppingCart />, path: "/account/user/order-history" },
-    { name: "Bull WishList", icon: <FaHeart />, path: "/account/user/wishlist" }, // ❤️ Updated icon
+    { name: "Bull WishList", icon: <FaHeart />, path: "/account/user/wishlist" }, 
     { name: "Monthly Reports", icon: <FaChartBar />, path: "/account/user/reports" },
     { name: "Settings", icon: <FaCog />, path: "/account/user/settings" },
   ];
