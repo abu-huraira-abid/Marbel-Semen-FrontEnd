@@ -59,7 +59,7 @@ export default function SideBar() {
     { name: "User Management", icon: <FaUsers />, path: "/account/users" },
     { name: "Query Management", icon: <FaEnvelopeOpenText />, path: "/account/queries" },
     { name: "Bull Inventory", icon: <FaBoxes />, path: "/account/inventory" },
-    { name: "Reports", icon: <FaChartBar />, path: "/account/reports" },
+    { name: "Montly Reports", icon: <FaChartBar />, path: "/account/reports" },
     { name: "Settings", icon: <FaCog />, path: "/account/settings" },
   ];
 

@@ -27,6 +27,7 @@ import UserDashboard from "./components/UserDashboard/Dashboard.jsx/UserDashboar
 import UserOrderHistory from "./components/UserDashboard/OrderHistory/UserOrderHistory";
 import UserSetting from "./components/UserDashboard/Setting/Setting";
 import MyWishList from './components/UserDashboard/MyWishList/MyWishList'
+import MonthlyReports from './components/DashboardUI/MonthlyReports/MonthlyReports'
 
 export default function App() {
   return (
@@ -49,6 +50,7 @@ export default function App() {
         <Route path="/account/settings" element={<Setting />} />
         <Route path="/account/queries" element={<CustomerQueries />} />
         <Route path="/account/inventory" element={<BullInventory />} />
+        <Route path="/account/reports" element={<MonthlyReports />} />
         <Route path="/cart" element={<CartStructure />} />
         <Route path="/checkout" element={<CheckoutStructure />} />
         <Route path="/order-history" element={<OrderHistoryStructure />} />
