@@ -1,3 +1,5 @@
+import Img from '../../../src/assets/media/About4.png'
+
 export default function FourthCard() {
   return (
     <>
@@ -33,7 +35,7 @@ export default function FourthCard() {
         </div>
         <div className="col-lg-6">
           <img
-            src="https://copilot.microsoft.com/th/id/BCO.65036d4f-203b-4896-b9bf-4d4d3963fc0a.png"
+            src={Img}
             alt=""
             className="img-fluid"
           />

@@ -1,0 +1,441 @@
+.embryo-hero {
+  animation: fadeIn 1.2s ease-in-out;
+}
+
+.overlay {
+  transition: all 0.4s ease;
+}
+
+.embryo-hero:hover .overlay {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(1.02);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+/* === Why Embryo Section === */
+.why-embryo-container {
+  background: radial-gradient(circle at 20% 30%, #0b0b0b, #111, #1a1a1a);
+  position: relative;
+  color: white;
+  min-height: 500px;
+}
+
+/* Abstract glowing orbs */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.5;
+  animation: float 10s ease-in-out infinite alternate;
+}
+
+.orb-1 {
+  top: -100px;
+  left: -100px;
+  width: 300px;
+  height: 300px;
+  background: #ffcc70;
+}
+.orb-2 {
+  bottom: 0;
+  right: -120px;
+  width: 250px;
+  height: 250px;
+  background: #ff7b00;
+  animation-delay: 2s;
+}
+.orb-3 {
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  background: #ffd580;
+  transform: translate(-50%, -50%);
+  animation-delay: 4s;
+}
+
+/* Floating animation */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(-20px);
+  }
+}
+
+/* Glassmorphism cards */
+.why-card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 25px;
+  backdrop-filter: blur(6px);
+  transition: all 0.3s ease;
+}
+
+.why-card:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-6px);
+  box-shadow: 0 8px 20px rgba(255, 199, 83, 0.2);
+}
+
+@media (max-width: 768px) {
+  .why-embryo-container {
+    text-align: center;
+    background: radial-gradient(circle at center, #0b0b0b, #151515, #1f1f1f);
+  }
+
+  .orb {
+    filter: blur(90px);
+  }
+}
+
+.process-section {
+  background: radial-gradient(circle at center, #141414, #000);
+  position: relative;
+  overflow: hidden;
+}
+
+.gradient-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0)
+  );
+  z-index: 1;
+}
+
+.process-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.process-card:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-5px);
+}
+
+.icon-container {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.process-icon {
+  font-size: 2rem;
+  color: #e5b80b; /* Wagyu gold */
+}
+
+.connector {
+  position: absolute;
+  top: 40%;
+  right: -10%;
+  width: 20%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Process Section */
+.process-section {
+  background: radial-gradient(circle at center, #141414, #000);
+  position: relative;
+  overflow: hidden;
+}
+
+.gradient-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0)
+  );
+  z-index: 1;
+}
+
+.process-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.process-card:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-5px);
+}
+
+.icon-container {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.5s ease;
+  box-shadow: 0 0 0px rgba(255, 215, 0, 0);
+}
+
+.process-card:hover .icon-container {
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+  background: rgba(255, 215, 0, 0.15);
+}
+
+.process-icon {
+  font-size: 2rem;
+  color: #e5b80b; /* Wagyu gold */
+  transition: color 0.4s ease;
+}
+
+.process-card:hover .process-icon {
+  color: #fff4b0;
+}
+
+/* Animated connector lines */
+.connector {
+  position: absolute;
+  top: 40%;
+  right: -10%;
+  width: 20%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 215, 0, 0.8),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: glowFlow 2s linear infinite;
+  border-radius: 2px;
+  filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.6));
+}
+
+@keyframes glowFlow {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Subtle fade-in animation on scroll */
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.process-card {
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards;
+}
+
+.process-card:nth-child(1) {
+  animation-delay: 0.2s;
+}
+.process-card:nth-child(2) {
+  animation-delay: 0.4s;
+}
+.process-card:nth-child(3) {
+  animation-delay: 0.6s;
+}
+.process-card:nth-child(4) {
+  animation-delay: 0.8s;
+}
+.process-card:nth-child(5) {
+  animation-delay: 1s;
+}
+
+
+/* ============================================================
+   ENTRANCE ANIMATIONS FOR WHY-EMBRYO SECTION
+============================================================ */
+
+/* Fade in container */
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(40px);
+  animation: fadeUp 1s ease forwards;
+}
+
+/* Title fade-up */
+.fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 1s ease forwards;
+  animation-delay: 0.2s;
+}
+
+/* Paragraph fade-up */
+.fade-up-delay {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeUp 1s ease forwards;
+  animation-delay: 0.4s;
+}
+
+/* Cards staggered animation */
+.fade-card {
+  opacity: 0;
+  transform: translateY(50px);
+  animation: fadeUp 1s ease forwards;
+}
+
+.fade-card:nth-child(1) {
+  animation-delay: 0.6s;
+}
+.fade-card:nth-child(2) {
+  animation-delay: 0.8s;
+}
+.fade-card:nth-child(3) {
+  animation-delay: 1s;
+}
+
+/* Reusable fadeUp keyframes */
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Subtle hover lift on each card */
+.fade-card .why-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 12px 25px rgba(255, 199, 83, 0.25);
+  transition: all 0.4s ease;
+}
+
+/* Initially hidden until scroll triggers */
+.fade-in-section,
+.fade-up,
+.fade-up-delay,
+.fade-card {
+  opacity: 0;
+  transform: translateY(50px);
+}
+
+/* When visible, run animations */
+.animate-visible .fade-in-section {
+  animation: fadeUp 1s ease forwards;
+}
+.animate-visible .fade-up {
+  animation: fadeUp 1s ease forwards;
+  animation-delay: 0.2s;
+}
+.animate-visible .fade-up-delay {
+  animation: fadeUp 1s ease forwards;
+  animation-delay: 0.4s;
+}
+.animate-visible .fade-card {
+  animation: fadeUp 1s ease forwards;
+}
+.animate-visible .fade-card:nth-child(1) {
+  animation-delay: 0.6s;
+}
+.animate-visible .fade-card:nth-child(2) {
+  animation-delay: 0.8s;
+}
+.animate-visible .fade-card:nth-child(3) {
+  animation-delay: 1s;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-section,
+.fade-up,
+.fade-up-delay,
+.fade-card {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s ease-out;
+}
+
+/* When section becomes visible */
+.animate-visible .fade-in-section,
+.animate-visible .fade-up,
+.animate-visible .fade-up-delay,
+.animate-visible .fade-card {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Optional stagger for cards */
+.animate-visible .fade-card:nth-child(1) {
+  transition-delay: 0.2s;
+}
+.animate-visible .fade-card:nth-child(2) {
+  transition-delay: 0.4s;
+}
+.animate-visible .fade-card:nth-child(3) {
+  transition-delay: 0.6s;
+}
+
+@keyframes floatDNA {
+  from {
+    transform: translateY(0px) rotate(0deg);
+  }
+  to {
+    transform: translateY(-40px) rotate(2deg);
+  }
+}
+
+input.golden-input {
+  border: 1.5px solid rgba(199, 167, 42, 0.6) !important;
+  box-shadow: 0 0 0 transparent;
+  transition: all 0.3s ease;
+}
+
+input.golden-input:focus,
+input.golden-input:hover {
+  border-color: rgba(199, 167, 42, 1) !important;
+  box-shadow: 0 0 10px rgba(199, 167, 42, 0.6);
+  outline: none;
+}

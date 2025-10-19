@@ -1,0 +1,79 @@
+.dna-strand-wrapper {
+  position: absolute;
+  right: 8%;
+  top: 10%;
+  width: 220px;
+  height: 500px;
+  pointer-events: none;
+  z-index: 1;
+  animation: dnaFloat 8s ease-in-out infinite;
+}
+
+.dna-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  animation: dnaRotate 100s linear infinite;
+}
+
+/* Animate the backbones */
+.dna-backbone {
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.3));
+  animation: dnaPulse 3s ease-in-out infinite;
+}
+
+/* Animate rungs with shimmer */
+.dna-rung {
+  animation: rungGlow 3s ease-in-out infinite;
+}
+.dna-rung:nth-child(odd) {
+  animation-delay: 1s;
+}
+
+/* Keyframes */
+@keyframes dnaFloat {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes dnaRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dnaPulse {
+  0%, 100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6));
+  }
+}
+
+@keyframes rungGlow {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Hide on small devices */
+@media (max-width: 768px) {
+  .dna-strand-wrapper {
+    display: none;
+  }
+}

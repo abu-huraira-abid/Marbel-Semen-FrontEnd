@@ -1,3 +1,4 @@
+import Img from '../../../src/assets/media/About3.png'
 
 export default function FirstCard()
 {
@@ -36,7 +37,7 @@ export default function FirstCard()
         <div className="col-lg-6">
           <div className="m-3 m-lg-5">
             <img
-            src="https://copilot.microsoft.com/th/id/BCO.c19e401b-b834-4209-9ae3-f46d9ee33699.png"
+            src={Img}
             alt=""
             className="img-fluid rounded-4"
           />

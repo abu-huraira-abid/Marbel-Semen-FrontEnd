@@ -28,6 +28,9 @@ import UserOrderHistory from "./components/UserDashboard/OrderHistory/UserOrderH
 import UserSetting from "./components/UserDashboard/Setting/Setting";
 import MyWishList from './components/UserDashboard/MyWishList/MyWishList'
 import MonthlyReports from './components/DashboardUI/MonthlyReports/MonthlyReports'
+import EmbryoPage from "./components/EmbryoPage/EmbryoPage";
+import SemenPage from "./components/Semen/SemenPage";
+import SpecialPage from "./components/Special/SpecialPage";
 
 export default function App() {
   return (
@@ -59,6 +62,9 @@ export default function App() {
         <Route path="/account/user/order-history" element={<UserOrderHistory />} />
         <Route path="/account/user/settings" element={<UserSetting />} />
         <Route path="/account/user/wishlist" element={<MyWishList />} />
+        <Route path="/embryo" element={<EmbryoPage />} />
+        <Route path="/semen" element={<SemenPage />} />
+        <Route path="/specials" element={<SpecialPage />} />
       </Routes>
 
       {/* 🔥 Toast container must be mounted once */}

@@ -1,4 +1,7 @@
 import MainImg from '../../assets/media/Landingpage.png'
+import Logo from '../../assets/media/Logo.png'
+import Crausal2 from '../../assets/media/Crausal2.png'
+import Crausal3 from '../../assets/media/Crausal3.png'
 import "../../../src/assets/styles/LandingPage.css"
 import { useNavigate } from 'react-router-dom';
 
@@ -32,7 +35,7 @@ export default function FirstCard() {
           <img
             className="img-fluid"
             width={"300px"}
-            src="https://www.marblesemen.com/wp-content/uploads/2021/06/Marblesemen-logo-no-outline.png"
+            src={Logo}
             alt="logo"
           />
         </div>
@@ -48,7 +51,7 @@ export default function FirstCard() {
     <div className="carousel-item">
       <div
         style={{
-          backgroundImage: `url(https://copilot.microsoft.com/th/id/BCO.bec12b84-208f-406b-9256-2ec2df4f4b4c.png)`,
+          backgroundImage: `url(${Crausal2})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           height: "600px",
@@ -60,7 +63,7 @@ export default function FirstCard() {
           <img
             className="img-fluid"
             width={"300px"}
-            src="https://www.marblesemen.com/wp-content/uploads/2021/06/Marblesemen-logo-no-outline.png"
+            src={Logo}
             alt="logo"
           />
         </div>
@@ -76,7 +79,7 @@ export default function FirstCard() {
     <div className="carousel-item">
       <div
         style={{
-          backgroundImage: `url(https://copilot.microsoft.com/th/id/BCO.b9d5ef6f-505c-4f41-ab5f-06d5d9622d07.png)`,
+          backgroundImage: `url(${Crausal3})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           height: "600px",
@@ -88,7 +91,7 @@ export default function FirstCard() {
           <img
             className="img-fluid"
             width={"300px"}
-            src="https://www.marblesemen.com/wp-content/uploads/2021/06/Marblesemen-logo-no-outline.png"
+            src={Logo}
             alt="logo"
           />
         </div>

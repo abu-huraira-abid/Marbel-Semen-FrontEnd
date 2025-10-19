@@ -46,7 +46,7 @@
 
 .stay-connected-section {
   position: relative;
-  background-image: url('https://copilot.microsoft.com/th/id/BCO.e927bcd8-0cf9-47fd-b2c6-61f56e54b2a4.png');
+  background-image: url('../../../src/assets/media/OverLay.png');
   background-size: cover;
   background-position: center;
   background-attachment: fixed; /* parallax effect */

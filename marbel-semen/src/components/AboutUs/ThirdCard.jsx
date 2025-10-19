@@ -1,4 +1,4 @@
-
+import Img from '../../../src/assets/media/About3_0.png'
 
 export default function ThirdCard()
 {
@@ -6,7 +6,7 @@ export default function ThirdCard()
         <>
         <div className="row gx-0">
             <div className="col-lg-6">
-                <img src="https://copilot.microsoft.com/th/id/BCO.b9d5ef6f-505c-4f41-ab5f-06d5d9622d07.png" alt="" className="img-fluid" />
+                <img src={Img} alt="" className="img-fluid" />
             </div>
             <div className="col-lg-6 d-flex flex-column align-items-center justify-content-center px-3 my-5 my-lg-0">
                 <p className="text-center my-3 fs-5 " style={{fontFamily:"Poppins"}}>All the Many of the Sires offered here are also available for commercial terminal cattle production as well on a large volume purchase arrangement. These straws require a signed agreement as to their usage at time of purchase.</p>

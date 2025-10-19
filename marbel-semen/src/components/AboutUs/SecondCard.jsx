@@ -1,3 +1,5 @@
+import Img from '../../../src/assets/media/About2.png'
+
 export default function SecondCard() {
   return (
     <>
@@ -22,7 +24,7 @@ export default function SecondCard() {
         </div>
         <div className="col-lg-6">
           <img
-            src="https://copilot.microsoft.com/th/id/BCO.9dc25ff5-8134-4a92-a34e-88752a492fd1.png"
+            src={Img}
             alt=""
             className="img-fluid"
           />

@@ -1,3 +1,5 @@
+import BullAdd from '../../../src/assets/media/BullAdd.png'
+
 export default function FeaturedBull() {
   return (
     <>
@@ -6,7 +8,7 @@ export default function FeaturedBull() {
         <div className="row mt-5" style={{fontFamily:"Poppins"}}>
           <div className="col-md-6">
             <img
-              src="https://copilot.microsoft.com/th/id/BCO.4c0afcc7-c1c5-4811-a4ff-e50c3d0ccfac.png"
+              src={BullAdd}
               alt=""
               className="img-fluid float-end rounded-4"
             />

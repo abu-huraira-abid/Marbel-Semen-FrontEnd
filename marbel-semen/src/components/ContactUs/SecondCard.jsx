@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import Img from '../../../src/assets/media/Crausal3.png'
 
 export default function SecondCard() {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -59,7 +60,7 @@ export default function SecondCard() {
       <div className="col-lg-6">
         <div className="m-3 m-lg-5">
           <img
-            src="https://copilot.microsoft.com/th/id/BCO.d0ceee66-65c1-4f2b-9696-c7423587deae.png"
+            src={Img}
             alt="Contact Us"
             className="img-fluid rounded-4"
           />

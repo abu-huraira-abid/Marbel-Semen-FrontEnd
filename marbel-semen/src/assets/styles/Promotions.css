@@ -1,0 +1,92 @@
+/* === HERO SECTION === */
+.promo-hero {
+  position: relative;
+  height: 90vh;
+  background: linear-gradient(135deg, #f7f9fc, #e6fff5);
+  overflow: hidden;
+}
+
+/* Floating glowing circles */
+.promo-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.4;
+  animation: float 10s ease-in-out infinite alternate;
+}
+
+.glow-1 {
+  width: 400px;
+  height: 400px;
+  top: -100px;
+  left: -150px;
+  background: #00c9a7;
+}
+.glow-2 {
+  width: 350px;
+  height: 350px;
+  bottom: -150px;
+  right: -100px;
+  background: #92fe9d;
+  animation-delay: 2s;
+}
+.glow-3 {
+  width: 250px;
+  height: 250px;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ffd56b;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-25px);
+  }
+}
+
+/* Headline */
+.promo-heading {
+  font-size: 3rem;
+  color: #222;
+  background: linear-gradient(90deg, #00c9a7, #ffd56b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Subtext */
+.promo-subtext {
+  font-size: 1.1rem;
+  color: #444;
+  opacity: 0.8;
+}
+
+/* Gradient buttons */
+.btn-gradient {
+  background: linear-gradient(90deg, #00c9a7, #ffd56b);
+  border: none;
+  color: #222;
+  transition: all 0.3s ease;
+}
+.btn-gradient:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 201, 167, 0.4);
+}
+
+/* Outline button */
+.btn-outline-gradient {
+  background: transparent;
+  border: 2px solid #00c9a7;
+  color: #00c9a7;
+  transition: all 0.3s ease;
+}
+.btn-outline-gradient:hover {
+  background: linear-gradient(90deg, #00c9a7, #ffd56b);
+  color: #222;
+  border: none;
+  transform: translateY(-3px);
+}

@@ -1,4 +1,4 @@
-
+import BullBatteryImage from "../../../src/assets/media/BullBattery.png"
 
 export default function FirstCard()
 {
@@ -8,7 +8,7 @@ export default function FirstCard()
             <div className="col-lg-6">
           <div className="m-3 m-lg-5">
             <img
-            src="https://copilot.microsoft.com/th/id/BCO.6775212f-f706-44bb-9935-1681873e597a.png"
+            src={BullBatteryImage}
             alt=""
             className="img-fluid rounded-4"
           />

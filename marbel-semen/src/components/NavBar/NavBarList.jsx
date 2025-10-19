@@ -13,9 +13,9 @@ export default function NavBarList() {
 
     if (path === "/") setActive("Home");
     else if (path.includes("/bull-battery")) setActive("Bull Battery");
-    else if (path.includes("/commerical-bulls")) setActive("Commerical Bulls");
-    else if (path.includes("/other-semen")) setActive("Other Semen");
-    else if (path.includes("/embryos")) setActive("Embryos");
+    else if (path.includes("/bull-compare")) setActive("Bull Compare"); // <--- Added this line
+    else if (path.includes("/semen")) setActive("Other Semen"); // <--- Changed this line to "Other Semen"
+    else if (path.includes("/embryo")) setActive("Embryos");
     else if (path.includes("/process")) setActive("Process");
     else if (path.includes("/specials")) setActive("Specials");
     else if (path.includes("/about-us")) setActive("About Us");
@@ -79,7 +79,8 @@ export default function NavBarList() {
             <li className="nav-item dropdown">
               <a
                 className={`nav-link dropdown-toggle text-white ${
-                  ["Bull Battery", "Commerical Bulls", "Other Semen"].includes(
+                  // Ensure all relevant states trigger the parent 'Semen' dropdown active style
+                  ["Bull Battery", "Bull Compare", "Other Semen"].includes(
                     active
                   )
                     ? "active"
@@ -111,7 +112,7 @@ export default function NavBarList() {
                     Bull Compare
                   </a>
                 </li>
-                <li>
+                {/* <li>
                   <a
                     className={`dropdown-item ${
                       active === "Commerical Bulls" ? "active" : ""
@@ -122,7 +123,7 @@ export default function NavBarList() {
                   >
                     Commerical Bulls
                   </a>
-                </li>
+                </li> */}
                 <li>
                   <hr className="dropdown-divider" />
                 </li>
@@ -131,9 +132,9 @@ export default function NavBarList() {
                     className={`dropdown-item ${
                       active === "Other Semen" ? "active" : ""
                     }`}
-                    onClick={() => handleClick("Other Semen", "/other-semen")}
+                    onClick={() => handleClick("Other Semen", "/semen")}
                   >
-                    Other Semen
+                    Semen
                   </a>
                 </li>
               </ul>
@@ -145,7 +146,7 @@ export default function NavBarList() {
                 className={`nav-link text-white ${
                   active === "Embryos" ? "active" : ""
                 }`}
-                onClick={() => handleClick("Embryos", "/embryos")}
+                onClick={() => handleClick("Embryos", "/embryo")}
               >
                 Embryos
               </a>
