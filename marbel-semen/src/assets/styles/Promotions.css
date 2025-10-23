@@ -1,12 +1,38 @@
-/* === HERO SECTION === */
+/* =========================================================
+   PROMOTION PAGE — LIGHT LUXURY THEME (AQUA + GOLD)
+   ========================================================= */
+
+/* === GLOBAL === */
+:root {
+  --mint: #00c9a7;
+  --gold: #ffd56b;
+  --text-dark: #222;
+  --text-muted: #555;
+  --light-bg: #f7f9fc;
+  --white: #fff;
+}
+
+body {
+  background: var(--light-bg);
+  color: var(--text-dark);
+  font-family: "Poppins", sans-serif;
+}
+
+/* ---------------------------------------------------------
+   HERO SECTION
+--------------------------------------------------------- */
 .promo-hero {
   position: relative;
   height: 90vh;
   background: linear-gradient(135deg, #f7f9fc, #e6fff5);
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
-/* Floating glowing circles */
+/* Glowing circles */
 .promo-glow {
   position: absolute;
   border-radius: 50%;
@@ -20,14 +46,14 @@
   height: 400px;
   top: -100px;
   left: -150px;
-  background: #00c9a7;
+  background: var(--mint);
 }
 .glow-2 {
   width: 350px;
   height: 350px;
   bottom: -150px;
   right: -100px;
-  background: #92fe9d;
+  background: var(--gold);
   animation-delay: 2s;
 }
 .glow-3 {
@@ -36,57 +62,310 @@
   top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: #ffd56b;
+  background: #b8fff4;
   animation-delay: 4s;
 }
 
 @keyframes float {
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(-25px);
-  }
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-25px); }
 }
 
-/* Headline */
 .promo-heading {
   font-size: 3rem;
-  color: #222;
-  background: linear-gradient(90deg, #00c9a7, #ffd56b);
+  font-family: "Syne", sans-serif;
+  background: linear-gradient(90deg, var(--mint), var(--gold));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* Subtext */
 .promo-subtext {
   font-size: 1.1rem;
-  color: #444;
+  color: var(--text-muted);
   opacity: 0.8;
+  margin-bottom: 2rem;
 }
 
-/* Gradient buttons */
+/* Buttons */
 .btn-gradient {
-  background: linear-gradient(90deg, #00c9a7, #ffd56b);
+  background: linear-gradient(90deg, var(--mint), var(--gold));
   border: none;
   color: #222;
   transition: all 0.3s ease;
 }
+
 .btn-gradient:hover {
   transform: translateY(-3px);
   box-shadow: 0 6px 20px rgba(0, 201, 167, 0.4);
 }
 
-/* Outline button */
 .btn-outline-gradient {
+  border: 2px solid var(--mint);
   background: transparent;
-  border: 2px solid #00c9a7;
-  color: #00c9a7;
+  color: var(--mint);
   transition: all 0.3s ease;
 }
+
 .btn-outline-gradient:hover {
-  background: linear-gradient(90deg, #00c9a7, #ffd56b);
+  background: linear-gradient(90deg, var(--mint), var(--gold));
   color: #222;
   border: none;
   transform: translateY(-3px);
 }
+
+/* ---------------------------------------------------------
+   PROMOTION APPROACH SECTION
+--------------------------------------------------------- */
+.promo-approach-section {
+  background: linear-gradient(to bottom, #ffffff, #f2fffa);
+  padding: 80px 0;
+}
+
+.promo-feature-card {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(0, 201, 167, 0.3);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 6px 15px rgba(0, 201, 167, 0.1);
+  transition: all 0.4s ease;
+  text-align: center;
+  padding: 2rem;
+}
+
+.promo-feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 201, 167, 0.25);
+  border-color: var(--gold);
+}
+
+.icon-wrap {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin: 0 auto 15px;
+  background: linear-gradient(135deg, var(--mint), var(--gold));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(0, 201, 167, 0.3);
+}
+
+.promo-icon {
+  color: white;
+  font-size: 1.8rem;
+  animation: floatIcon 3s ease-in-out infinite;
+}
+
+@keyframes floatIcon {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
+}
+
+/* ---------------------------------------------------------
+   FEATURED PROMOTIONS SECTION
+--------------------------------------------------------- */
+.featured-promos-section {
+  background: linear-gradient(to bottom, #fefefe, #f4fdf9);
+  padding: 80px 0;
+}
+
+.promo-card {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  height: 380px;
+  cursor: pointer;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.promo-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.promo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.85);
+  transition: transform 0.5s ease;
+}
+
+.promo-card:hover .promo-img {
+  transform: scale(1.08);
+}
+
+.promo-overlay {
+  position: absolute;
+  inset: 0;
+  /* background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,0.8)); */
+}
+
+.promo-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 25px;
+  z-index: 2;
+}
+
+.promo-tag {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--mint), var(--gold));
+  color: #1a1a1a;
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ---------------------------------------------------------
+   LIMITED OFFER SECTION (Light Themed)
+--------------------------------------------------------- */
+.limited-offer-section {
+  background: linear-gradient(180deg, #f8fffd 0%, #e6fff5 100%);
+  color: var(--text-dark);
+  position: relative;
+  overflow: hidden;
+  padding: 100px 0;
+}
+
+.offer-gradient-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(0, 201, 167, 0.12), transparent 70%);
+  animation: pulseGlow 6s ease-in-out infinite alternate;
+  z-index: 1;
+}
+
+@keyframes pulseGlow {
+  0% { opacity: 0.4; transform: scale(1); }
+  100% { opacity: 0.8; transform: scale(1.1); }
+}
+
+.countdown-wrapper {
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.countdown-box {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 201, 167, 0.4);
+  border-radius: 12px;
+  padding: 20px 30px;
+  min-width: 100px;
+  backdrop-filter: blur(4px);
+  transition: all 0.3s ease;
+}
+
+.countdown-box:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateY(-5px);
+}
+
+.countdown-value {
+  font-family: "Syne", sans-serif;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--mint);
+}
+
+.countdown-label {
+  font-family: "Poppins", sans-serif;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.offer-btn {
+  background: linear-gradient(90deg, var(--mint), var(--gold));
+  border: none;
+  color: #000;
+  transition: all 0.3s ease;
+}
+
+.offer-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(0, 201, 167, 0.4);
+}
+
+/* ---------------------------------------------------------
+   BREEDER SUCCESS STORIES (Light Version)
+--------------------------------------------------------- */
+.breeder-stories-section {
+  background: linear-gradient(to bottom, #ffffff, #f3fdfb);
+  position: relative;
+  overflow: hidden;
+  padding: 100px 0;
+}
+
+.text-gold {
+  color: var(--gold);
+}
+
+.story-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 201, 167, 0.3);
+  border-radius: 14px;
+  transition: all 0.4s ease;
+  position: relative;
+  box-shadow: 0 6px 15px rgba(0, 201, 167, 0.1);
+}
+
+.story-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 25px rgba(0, 201, 167, 0.2);
+  border-color: var(--gold);
+}
+
+.quote-icon {
+  font-size: 1.8rem;
+  color: var(--mint);
+  opacity: 0.8;
+  animation: floatQuote 3s ease-in-out infinite alternate;
+}
+
+@keyframes floatQuote {
+  from { transform: translateY(0); }
+  to { transform: translateY(-4px); }
+}
+
+.btn-outline-gold {
+  color: var(--mint);
+  border: 1px solid var(--mint);
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-gold:hover {
+  background: linear-gradient(90deg, var(--mint), var(--gold));
+  color: #111;
+  box-shadow: 0 0 20px rgba(0, 201, 167, 0.3);
+}
+
+
+.breeder-stories-section-light {
+  background: linear-gradient(to bottom, #ffffff, #f5f8f7);
+  position: relative;
+}
+
+.story-card-light {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 201, 167, 0.25);
+  box-shadow: 0 6px 20px rgba(0, 201, 167, 0.1);
+  transition: all 0.4s ease;
+}
+
+.story-card-light:hover {
+  transform: translateY(-8px);
+  border-color: #ffd56b;
+  box-shadow: 0 10px 30px rgba(0, 201, 167, 0.2);
+}
+
+
