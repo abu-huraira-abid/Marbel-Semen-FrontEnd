@@ -14,7 +14,7 @@ export default function BullInventory() {
               className="my-3 text-center fw-bold"
               style={{ fontFamily: "Syne" }}
             >
-              BULL Inventory Management
+              Inventory Management
             </h1>
           </div>
           <Inventory />

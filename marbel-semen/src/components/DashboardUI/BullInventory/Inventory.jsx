@@ -6,56 +6,58 @@ import Swal from "sweetalert2";
 export default function Inventory() {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
 
+  const [entityType, setEntityType] = useState("bulls"); // bulls | semens | embryos
   const [inventory, setInventory] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [selectedBull, setSelectedBull] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [updatedQuantity, setUpdatedQuantity] = useState("");
 
   const [searchName, setSearchName] = useState("");
   const [searchBreed, setSearchBreed] = useState("");
   const [searchStatus, setSearchStatus] = useState("");
 
-  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
 
   const token = localStorage.getItem("access_token");
 
-  // Fetch all bulls with stock
+  // Fetch inventory based on selected entity type
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/bulls/stocks/`, {
+        const res = await axios.get(`${BASE_URL}/${entityType}/1/stocks/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
-        setInventory(res.data.data || []);
+        console.log(res.data);
+        setInventory(res.data.data || res.data.results?.data || res.data.results || []);
       } catch (error) {
-        console.error("Error loading stocks:", error.response?.data || error);
+        console.error(
+          "Error loading inventory:",
+          error.response?.data || error
+        );
         Swal.fire({
           icon: "error",
-          title: "Failed to Load Inventory",
+          title: `Failed to Load ${entityType}`,
           text: error.response?.data?.message || "Please try again later.",
         });
       }
     };
 
     fetchData();
-  }, [BASE_URL, token]);
+  }, [BASE_URL, token, entityType]);
 
-  // Handle edit
-  const handleEditClick = (bull) => {
-    setSelectedBull(bull);
-    setUpdatedQuantity(bull.quantity);
+  const handleEditClick = (item) => {
+    setSelectedItem(item);
+    setUpdatedQuantity(item.quantity || 0);
     setShowModal(true);
   };
 
   const handleSave = async () => {
-    if (!selectedBull) return;
+    if (!selectedItem) return;
 
     const result = await Swal.fire({
       title: "Confirm Update",
-      text: `Are you sure you want to update the quantity of "${selectedBull.name}"?`,
+      text: `Update quantity of "${selectedItem.name || "Item"}"?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#28a745",
@@ -66,16 +68,15 @@ export default function Inventory() {
     if (!result.isConfirmed) return;
 
     try {
-      const res = await axios.patch(
-        `${BASE_URL}/bulls/${selectedBull.id}/stock/`,
+      await axios.patch(
+        `${BASE_URL}/${entityType}/${selectedItem.id}/stock/`,
         { quantity: updatedQuantity },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // Update UI instantly
       setInventory((prev) =>
         prev.map((item) =>
-          item.id === selectedBull.id
+          item.id === selectedItem.id
             ? { ...item, quantity: updatedQuantity }
             : item
         )
@@ -86,12 +87,12 @@ export default function Inventory() {
       Swal.fire({
         icon: "success",
         title: "Updated Successfully",
-        text: `${selectedBull.name}'s stock has been updated.`,
+        text: `${selectedItem.name || "Item"} quantity updated.`,
         timer: 2000,
         showConfirmButton: false,
       });
     } catch (error) {
-      console.error("Error updating stock:", error.response?.data || error);
+      console.error("Error updating inventory:", error.response?.data || error);
       Swal.fire({
         icon: "error",
         title: "Update Failed",
@@ -100,30 +101,23 @@ export default function Inventory() {
     }
   };
 
-  // Filter by search fields
-  const filteredInventory = inventory.filter((bull) => {
-    const matchesName = bull.name
+  // Filter logic with safety checks
+  const filteredInventory = inventory.filter((item) => {
+    const matchesName = (item?.name || "")
       .toLowerCase()
       .includes(searchName.toLowerCase());
-    const matchesBreed = bull.breed
+
+    const matchesBreed = (item?.breed || "")
       .toLowerCase()
       .includes(searchBreed.toLowerCase());
 
-    const status =
-      bull.quantity === 0
-        ? "danger"
-        : bull.quantity <= 5
-        ? "alert"
-        : "success";
-
-    const matchesStatus = searchStatus
-      ? status === searchStatus
-      : true;
+    const quantity = item?.quantity ?? 0;
+    const status = quantity === 0 ? "danger" : quantity <= 5 ? "alert" : "success";
+    const matchesStatus = searchStatus ? status === searchStatus : true;
 
     return matchesName && matchesBreed && matchesStatus;
   });
 
-  // Pagination logic
   const totalPages = Math.ceil(filteredInventory.length / pageSize);
   const paginatedInventory = filteredInventory.slice(
     (currentPage - 1) * pageSize,
@@ -132,8 +126,30 @@ export default function Inventory() {
 
   return (
     <div className="container py-5">
+      {/* Entity Type Selector */}
+      <div className="mb-3 d-flex align-items-center justify-content-between">
+        <h2 className="fw-bold" style={{ fontFamily: "Syne" }}>
+          {entityType === "bulls"
+            ? "Bull Inventory"
+            : entityType === "semens"
+            ? "Semen Inventory"
+            : "Embryo Inventory"}
+        </h2>
+
+        <select
+          className="form-select"
+          value={entityType}
+          onChange={(e) => setEntityType(e.target.value)}
+          style={{ maxWidth: "250px" }}
+        >
+          <option value="bulls">Bulls</option>
+          <option value="semens">Semen</option>
+          <option value="embryos">Embryos</option>
+        </select>
+      </div>
+
       {/* Filters */}
-      <div className="card shadow-sm  border-0 mb-4">
+      <div className="card shadow-sm border-0 mb-4">
         <div className="card-body d-flex flex-column flex-md-row gap-3 justify-content-between align-items-center">
           <input
             type="text"
@@ -182,19 +198,19 @@ export default function Inventory() {
               <thead className="table-dark">
                 <tr>
                   <th>Image</th>
-                  <th>Bull Name</th>
+                  <th>Name</th>
                   <th>Breed</th>
                   <th>Quantity</th>
                   <th className="text-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {paginatedInventory.map((bull) => (
-                  <tr key={bull.id}>
+                {paginatedInventory.map((item) => (
+                  <tr key={item.id}>
                     <td>
                       <img
-                        src={`${bull.image}`}
-                        alt={bull.name}
+                        src={item?.image || ""}
+                        alt={item?.name || "Item"}
                         className="rounded-2"
                         style={{
                           width: "80px",
@@ -203,26 +219,26 @@ export default function Inventory() {
                         }}
                       />
                     </td>
-                    <td className="fw-semibold">{bull.name}</td>
-                    <td>{bull.breed}</td>
+                    <td className="fw-semibold">{item?.name || "-"}</td>
+                    <td>{item?.breed || "-"}</td>
                     <td>
                       <span
                         className={`badge px-3 py-2 fs-6 rounded-0 ${
-                          bull.quantity === 0
+                          item?.quantity === 0
                             ? "bg-danger"
-                            : bull.quantity > 0 && bull.quantity <= 5
+                            : item?.quantity <= 5
                             ? "bg-warning text-dark"
                             : "bg-success"
                         }`}
                         style={{ width: "70px" }}
                       >
-                        {bull.quantity}
+                        {item?.quantity ?? 0}
                       </span>
                     </td>
                     <td className="text-center">
                       <button
                         className="btn btn-primary btn-sm d-flex align-items-center mx-auto rounded-1 px-4"
-                        onClick={() => handleEditClick(bull)}
+                        onClick={() => handleEditClick(item)}
                       >
                         <FaEdit className="me-1" /> Update
                       </button>
@@ -234,17 +250,16 @@ export default function Inventory() {
 
             {filteredInventory.length === 0 && (
               <div className="text-center py-5 text-muted">
-                No inventory records found.
+                No records found.
               </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Pagination Footer */}
+      {/* Pagination */}
       {filteredInventory.length > 0 && (
         <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4 px-2">
-          {/* Page navigation */}
           <div className="d-flex align-items-center mb-3 mb-md-0">
             <button
               className="btn btn-outline-secondary btn-sm me-2"
@@ -265,7 +280,6 @@ export default function Inventory() {
             </button>
           </div>
 
-          {/* Rows per page */}
           <div className="d-flex align-items-center">
             <label className="me-2 mb-0 fw-semibold">Rows per Page:</label>
             <select
@@ -287,7 +301,7 @@ export default function Inventory() {
       )}
 
       {/* Modal */}
-      {showModal && (
+      {showModal && selectedItem && (
         <div
           className="modal fade show"
           style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}
@@ -304,39 +318,33 @@ export default function Inventory() {
                 ></button>
               </div>
               <div className="modal-body">
-                {selectedBull && (
-                  <>
-                    <div className="d-flex align-items-center mb-3">
-                      <img
-                        src={selectedBull.image}
-                        alt={selectedBull.name}
-                        className="rounded-3 border me-3"
-                        style={{
-                          width: "100px",
-                          height: "70px",
-                          objectFit: "cover",
-                        }}
-                      />
-                      <div>
-                        <h5 className="m-0">{selectedBull.name}</h5>
-                        <small className="text-muted">
-                          {selectedBull.breed}
-                        </small>
-                      </div>
-                    </div>
+                <div className="d-flex align-items-center mb-3">
+                  <img
+                    src={selectedItem?.image || ""}
+                    alt={selectedItem?.name || "Item"}
+                    className="rounded-3 border me-3"
+                    style={{
+                      width: "100px",
+                      height: "70px",
+                      objectFit: "cover",
+                    }}
+                  />
+                  <div>
+                    <h5 className="m-0">{selectedItem?.name || "-"}</h5>
+                    <small className="text-muted">{selectedItem?.breed || "-"}</small>
+                  </div>
+                </div>
 
-                    <div className="mb-3">
-                      <label className="form-label fw-semibold">Quantity</label>
-                      <input
-                        type="number"
-                        className="form-control"
-                        value={updatedQuantity}
-                        onChange={(e) => setUpdatedQuantity(e.target.value)}
-                        min="0"
-                      />
-                    </div>
-                  </>
-                )}
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">Quantity</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={updatedQuantity}
+                    onChange={(e) => setUpdatedQuantity(e.target.value)}
+                    min="0"
+                  />
+                </div>
               </div>
               <div className="modal-footer">
                 <button

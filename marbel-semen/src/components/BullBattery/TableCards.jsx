@@ -14,13 +14,13 @@ export default function TableCards() {
   const [searchBreed, setSearchBreed] = useState("");
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(10000);
-  const [priceRange, setPriceRange] = useState([0, 10000]); // full price range
-  const [priceFilterActive, setPriceFilterActive] = useState(false); // track user interaction
+  const [priceRange, setPriceRange] = useState([0, 10000]);
+  const [priceFilterActive, setPriceFilterActive] = useState(false);
 
   const navigate = useNavigate();
   const itemsPerPage = window.innerWidth >= 992 ? 6 : 3;
 
-  // Fetch bulls
+  // ✅ 1. Fetch bulls only (no price packages)
   useEffect(() => {
     const fetchBulls = async () => {
       try {
@@ -28,19 +28,6 @@ export default function TableCards() {
         const data = res.data.results?.data || res.data.results || res.data;
         setBulls(data);
         setFilteredBulls(data);
-
-        // Auto detect price range from all bulls
-        let allPrices = [];
-        data.forEach((bull) => {
-          bull.price_packages?.forEach((pkg) =>
-            allPrices.push(parseFloat(pkg.price_per_unit))
-          );
-        });
-        const min = Math.min(...allPrices, 0);
-        const max = Math.max(...allPrices, 10000);
-        setPriceRange([min, max]);
-        setMinPrice(min);
-        setMaxPrice(max);
       } catch (err) {
         console.error("Error fetching bulls:", err);
       } finally {
@@ -50,42 +37,49 @@ export default function TableCards() {
     fetchBulls();
   }, [BASE_URL]);
 
-  // Fetch packages lazily
+  // ✅ 2. Fetch price packages lazily for each bull
   const fetchPackages = async (bullId) => {
-    if (packages[bullId]) return;
+    if (packages[bullId]) return; // already loaded
     try {
       const res = await axios.get(`${BASE_URL}/bulls/${bullId}/price-packages/`);
-      setPackages((prev) => ({ ...prev, [bullId]: res.data.results }));
+      console.log(res)
+      const pkgData = res.data.results?.data || res.data.results || res.data;
+      setPackages((prev) => ({ ...prev, [bullId]: pkgData }));
+
+      // Update global price range automatically
+      const allPrices = pkgData.map((p) => parseFloat(p.price_per_unit));
+      if (allPrices.length > 0) {
+        setPriceRange((prev) => [
+          Math.min(prev[0], ...allPrices),
+          Math.max(prev[1], ...allPrices),
+        ]);
+      }
     } catch (err) {
       console.error(`Error fetching packages for bull ${bullId}:`, err);
       setPackages((prev) => ({ ...prev, [bullId]: [] }));
     }
   };
 
-  // Filter logic
+  // ✅ 3. Filter logic (name, breed, and price)
   useEffect(() => {
     let result = [...bulls];
 
-    // Name filter
     if (searchName.trim()) {
       result = result.filter((bull) =>
         bull.name?.toLowerCase().includes(searchName.toLowerCase())
       );
     }
 
-    // Breed filter
     if (searchBreed.trim()) {
       result = result.filter((bull) =>
         bull.breed?.toLowerCase().includes(searchBreed.toLowerCase())
       );
     }
 
-    // Price filter only if user activated
     if (priceFilterActive) {
       result = result.filter((bull) => {
         const bullPkgs = packages[bull.id];
         if (!bullPkgs || bullPkgs.length === 0) return false;
-
         const minPkgPrice = Math.min(...bullPkgs.map((p) => parseFloat(p.price_per_unit)));
         return minPkgPrice >= minPrice && minPkgPrice <= maxPrice;
       });
@@ -175,7 +169,7 @@ export default function TableCards() {
           {currentBulls.length > 0 ? (
             currentBulls.map((bull) => {
               const bullPackages = packages[bull.id];
-              if (!bullPackages) fetchPackages(bull.id);
+              if (!bullPackages) fetchPackages(bull.id); // lazy load
 
               return (
                 <div className="col-12 col-lg-4 mb-4" key={bull.id}>

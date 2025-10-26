@@ -12,16 +12,15 @@ export default function TotalBullsCard() {
     try {
       const token = localStorage.getItem("access_token"); // or wherever you store it
       const response = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/bulls/total_count/`,
+        `${import.meta.env.VITE_BASE_URL}/bulls/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      if (response.data.success) {
-        setCount(response.data.total_bulls);
-      }
+      // console.log(response)
+      setCount(response.data.count);
     } catch (error) {
       console.error("Error fetching total bulls:", error);
     }

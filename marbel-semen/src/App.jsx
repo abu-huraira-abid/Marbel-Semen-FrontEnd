@@ -11,12 +11,12 @@ import BullCompare from "./components/BullCompare/BullCompare";
 import AddToCart from "./components/AddToCart/AddToCart";
 import Account from "./components/Register/Account";
 import Dashboard from "./components/DashboardUI/Dashboard/Dashboard";
-import BullsManagement from "./components/DashboardUI/BullManagement/BullsManagement";
-import BullView from "./components/DashboardUI/BullManagement/BullView";
+// import BullView from "./components/DashboardUI/BullManagement/BullView";
+import AnimalView from "./components/DashboardUI/BullManagement/AnimalView";
 import OrderManagement from "./components/DashboardUI/OrderManagement/OrderManagement";
 import UsersManagement from "./components/DashboardUI/Users/UsersManagement";
 import Setting from "./components/DashboardUI/Setting/Setting";
-import BullPrice from "./components/DashboardUI/BullManagement/BullPrice";
+import BullPrice from "./components/DashboardUI/BullManagement/DynamicPrice";
 import CustomerQueries from "./components/DashboardUI/CustomerQueries/CustomerQueries";
 import CartStructure from "./components/Cart/CartStructure";
 import CheckoutStructure from "./components/Checkout/CheckoutStructure";
@@ -26,11 +26,13 @@ import BullInventory from "./components/DashboardUI/BullInventory/BullInvetory";
 import UserDashboard from "./components/UserDashboard/Dashboard.jsx/UserDashboard";
 import UserOrderHistory from "./components/UserDashboard/OrderHistory/UserOrderHistory";
 import UserSetting from "./components/UserDashboard/Setting/Setting";
-import MyWishList from './components/UserDashboard/MyWishList/MyWishList'
-import MonthlyReports from './components/DashboardUI/MonthlyReports/MonthlyReports'
+import MyWishList from "./components/UserDashboard/MyWishList/MyWishList";
+import MonthlyReports from "./components/DashboardUI/MonthlyReports/MonthlyReports";
 import EmbryoPage from "./components/EmbryoPage/EmbryoPage";
 import SemenPage from "./components/Semen/SemenPage";
 import SpecialPage from "./components/Special/SpecialPage";
+import EntityManagement from "./components/DashboardUI/BullManagement/EntityManagement";
+import DynamicPrice from "./components/DashboardUI/BullManagement/DynamicPrice";
 
 export default function App() {
   return (
@@ -45,9 +47,12 @@ export default function App() {
         <Route path="/add-cart" element={<AddToCart />} />
         <Route path="/account" element={<Account />} />
         <Route path="/account/dashboard" element={<Dashboard />} />
-        <Route path="/account/bulls" element={<BullsManagement />} />
-        <Route path="/account/bulls/:id" element={<BullView />} />
-        <Route path="/account/bulls/price/:id" element={<BullPrice />} />
+        <Route path="/account/bulls" element={<EntityManagement />} />
+        <Route path="/account/:entityType/:id" element={<AnimalView />} />
+        <Route
+          path="/account/:entityType/price/:id"
+          element={<DynamicPrice />}
+        />
         <Route path="/account/orders" element={<OrderManagement />} />
         <Route path="/account/users" element={<UsersManagement />} />
         <Route path="/account/settings" element={<Setting />} />
@@ -59,7 +64,10 @@ export default function App() {
         <Route path="/order-history" element={<OrderHistoryStructure />} />
         <Route path="/process" element={<Process />} />
         <Route path="/account/user/dashboard" element={<UserDashboard />} />
-        <Route path="/account/user/order-history" element={<UserOrderHistory />} />
+        <Route
+          path="/account/user/order-history"
+          element={<UserOrderHistory />}
+        />
         <Route path="/account/user/settings" element={<UserSetting />} />
         <Route path="/account/user/wishlist" element={<MyWishList />} />
         <Route path="/embryo" element={<EmbryoPage />} />

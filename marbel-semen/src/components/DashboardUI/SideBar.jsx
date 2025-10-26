@@ -15,6 +15,7 @@ import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import "../../../src/assets/styles/Dashboard.css";
 import API from "../Register/utils/Api";
+import Img from '../../../src/assets/media/Logo.png'
 
 export default function SideBar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -53,8 +54,8 @@ export default function SideBar() {
 
   const menuItems = [
     { name: "Dashboard", icon: <FaHome />, path: "/account/dashboard" },
-    { name: "Bull Management", icon: <FaBullhorn />, path: "/account/bulls" },
-    { name: "Semen Batches", icon: <FaFlask />, path: "/account/semen-batches" },
+    { name: "Entity Management", icon: <FaBullhorn />, path: "/account/bulls" },
+    // { name: "Semen Batches", icon: <FaFlask />, path: "/account/semen-batches" },
     { name: "Order Management", icon: <FaShoppingCart />, path: "/account/orders" },
     { name: "User Management", icon: <FaUsers />, path: "/account/users" },
     { name: "Query Management", icon: <FaEnvelopeOpenText />, path: "/account/queries" },
@@ -81,15 +82,12 @@ export default function SideBar() {
         }`}
       >
         {/* Logo */}
-        <div className="d-flex align-items-center mb-4">
+        <div className="d-flex align-items-center justify-content-center bg-white mb-3 rounded-3 p-3 w-75 mx-auto">
           <img
-            src="https://copilot.microsoft.com/th/id/BCO.9007888a-9818-481b-811f-4d5a4ecf8c29.png"
+            src={Img}
             width={"100px"}
             alt="logo"
           />
-          <h4 className="m-0 ms-2" style={{ fontFamily: "Syne" }}>
-            MARBEL <br /> SEMEN
-          </h4>
         </div>
 
         {/* Nav Menu */}

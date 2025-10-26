@@ -1,25 +1,42 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 
 export default function PricePackages() {
   const { id } = useParams();
+  const location = useLocation();
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const token = localStorage.getItem("access_token");
+
+  // Dynamically extract entity type from the route (e.g. /account/bulls/price/:id)
+  const pathParts = location.pathname.split("/");
+  const pluralType = pathParts.includes("bulls")
+    ? "bulls"
+    : pathParts.includes("semens")
+    ? "semens"
+    : pathParts.includes("embryos")
+    ? "embryos"
+    : pathParts.includes("batches")
+    ? "batches"
+    : "bulls"; // default fallback
+
+  const entityName = pluralType.charAt(0).toUpperCase() + pluralType.slice(1);
 
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch packages on mount
+  // 🔹 Fetch price packages
   useEffect(() => {
     const fetchPackages = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`${BASE_URL}/bulls/${id}/price-packages/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
+        const res = await axios.get(
+          `${BASE_URL}/${pluralType}/${id}/price-packages/`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         const data = Array.isArray(res.data)
           ? res.data
           : res.data.results || [];
@@ -28,7 +45,7 @@ export default function PricePackages() {
         Swal.fire({
           icon: "error",
           title: "Failed to Load",
-          text: "Unable to load price packages.",
+          text: `Unable to load ${entityName} price packages.`,
         });
       } finally {
         setLoading(false);
@@ -36,9 +53,9 @@ export default function PricePackages() {
     };
 
     fetchPackages();
-  }, [id]);
+  }, [id, pluralType]);
 
-  // Add new (unsaved) package
+  // 🔹 Add new package (unsaved)
   const addPackage = () => {
     setPackages((prev) => [
       ...prev,
@@ -46,7 +63,7 @@ export default function PricePackages() {
     ]);
   };
 
-  // Update a package in state
+  // 🔹 Update package state
   const updatePackage = (index, field, value) => {
     setPackages((prev) => {
       const updated = [...prev];
@@ -55,7 +72,7 @@ export default function PricePackages() {
     });
   };
 
-  // Save all packages (create/update)
+  // 🔹 Save packages (create or update)
   const savePackages = async () => {
     if (packages.length === 0) {
       Swal.fire({
@@ -69,26 +86,24 @@ export default function PricePackages() {
     try {
       setLoading(true);
       for (const pkg of packages) {
+        const payload = {
+          min_units: pkg.min_units,
+          max_units: pkg.max_units,
+          price_per_unit: pkg.price_per_unit,
+        };
+
         if (pkg.id) {
-          // Update existing
+          // Update existing package
           await axios.patch(
-            `${BASE_URL}/bulls/${id}/price-packages/${pkg.id}/`,
-            {
-              min_units: pkg.min_units,
-              max_units: pkg.max_units,
-              price_per_unit: pkg.price_per_unit,
-            },
+            `${BASE_URL}/${pluralType}/${id}/price-packages/${pkg.id}/`,
+            payload,
             { headers: { Authorization: `Bearer ${token}` } }
           );
         } else {
-          // Create new
+          // Create new package
           await axios.post(
-            `${BASE_URL}/bulls/${id}/price-packages/`,
-            {
-              min_units: pkg.min_units,
-              max_units: pkg.max_units,
-              price_per_unit: pkg.price_per_unit,
-            },
+            `${BASE_URL}/${pluralType}/${id}/price-packages/`,
+            payload,
             { headers: { Authorization: `Bearer ${token}` } }
           );
         }
@@ -97,7 +112,7 @@ export default function PricePackages() {
       Swal.fire({
         icon: "success",
         title: "Saved Successfully!",
-        text: "Price packages have been updated.",
+        text: `${entityName} price packages have been updated.`,
         showConfirmButton: false,
         timer: 2000,
       });
@@ -105,14 +120,14 @@ export default function PricePackages() {
       Swal.fire({
         icon: "error",
         title: "Save Failed",
-        text: "An error occurred while saving packages.",
+        text: `An error occurred while saving ${entityName} packages.`,
       });
     } finally {
       setLoading(false);
     }
   };
 
-  // Remove package (delete from API if it exists)
+  // 🔹 Remove package (delete if saved)
   const removePackage = async (index, pkg) => {
     const confirm = await Swal.fire({
       icon: "warning",
@@ -128,9 +143,12 @@ export default function PricePackages() {
 
     if (pkg.id) {
       try {
-        await axios.delete(`${BASE_URL}/bulls/${id}/price-packages/${pkg.id}/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await axios.delete(
+          `${BASE_URL}/${pluralType}/${id}/price-packages/${pkg.id}/`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         Swal.fire({
           icon: "success",
           title: "Deleted",
@@ -150,7 +168,7 @@ export default function PricePackages() {
       Swal.fire({
         icon: "info",
         title: "Removed",
-        text: "New (unsaved) package removed.",
+        text: "Unsaved package removed.",
         timer: 1200,
         showConfirmButton: false,
       });
@@ -162,13 +180,15 @@ export default function PricePackages() {
   return (
     <div className="my-4">
       <h1 className="mb-3" style={{ fontFamily: "Syne" }}>
-        Price Packages
+        {entityName} Price Packages
       </h1>
 
       {loading && <div className="text-muted mb-2">Loading...</div>}
 
       {packages.length === 0 && !loading && (
-        <div className="text-muted mb-2">No packages yet. Add one below.</div>
+        <div className="text-muted mb-2">
+          No packages yet. Add one below.
+        </div>
       )}
 
       {packages.map((pkg, idx) => (
