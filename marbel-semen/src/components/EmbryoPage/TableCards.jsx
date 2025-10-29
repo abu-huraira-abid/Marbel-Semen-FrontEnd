@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaChartBar, FaShoppingCart } from "react-icons/fa";
 import axios from "axios";
 import "../../assets/styles/Embryo.css"; // Reuse Embryo styles for smooth consistency
 
@@ -41,7 +42,8 @@ export default function TableCards() {
   useEffect(() => {
     const fetchBulls = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/bulls/`);
+        const res = await axios.get(`${BASE_URL}/embryos/`);
+        console.log(res.data);
         const data = res.data.results?.data || res.data.results || res.data;
         setBulls(data);
         setFilteredBulls(data);
@@ -71,7 +73,7 @@ export default function TableCards() {
     if (packages[bullId]) return;
     try {
       const res = await axios.get(
-        `${BASE_URL}/bulls/${bullId}/price-packages/`
+        `${BASE_URL}/embryos/${bullId}/price-packages/`
       );
       setPackages((prev) => ({ ...prev, [bullId]: res.data.results }));
     } catch (err) {
@@ -170,7 +172,7 @@ export default function TableCards() {
                 onChange={(e) => setSearchName(e.target.value)}
               />
             </div>
-            <div className="col-md-4">
+            {/* <div className="col-md-4">
               <label className="form-label text-light fw-semibold">
                 Search by Breed
               </label>
@@ -181,7 +183,7 @@ export default function TableCards() {
                 value={searchBreed}
                 onChange={(e) => setSearchBreed(e.target.value)}
               />
-            </div>
+            </div> */}
             <div className="col-md-4">
               <label className="form-label text-light fw-semibold">
                 Price Range (${minPrice} - ${maxPrice})
@@ -239,9 +241,17 @@ export default function TableCards() {
                     >
                       {bull.name}
                     </h5>
-                    <p className="text-light mb-2">{bull.breed}</p>
+                    <p className="text-light mb-2">
+                      Dam: <span className="fw-bold">{bull.dam.name}</span>
+                    </p>
+                    <p className="text-light mb-2">
+                      Sire: <span className="fw-bold">{bull.sire.name}</span>
+                    </p>
+                    <p className="text-light mb-2">
+                      Price Packages:
+                    </p>
 
-                    <ul className="text-light small list-unstyled flex-grow-1">
+                    <ul className="text-light small flex-grow-1">
                       {bullPackages ? (
                         bullPackages.length > 0 ? (
                           bullPackages.map((p) => (
@@ -262,20 +272,21 @@ export default function TableCards() {
 
                     <div className="d-flex gap-2 mt-auto">
                       <button
-                        className="btn btn-outline-warning w-50 rounded-1"
+                        className="btn btn-outline-warning w-50 rounded-1 d-flex align-items-center justify-content-center gap-2"
                         onClick={() =>
                           navigate("/view-stat", { state: { id: bull.id } })
                         }
                       >
-                        View Stats
+                        <FaChartBar /> View Stats
                       </button>
+
                       <button
-                        className="btn btn-warning text-dark w-50 rounded-1"
+                        className="btn btn-warning text-dark w-50 rounded-1 d-flex align-items-center justify-content-center gap-2"
                         onClick={() =>
                           navigate("/add-cart", { state: { id: bull.id } })
                         }
                       >
-                        Add to Cart
+                        <FaShoppingCart /> Add to Cart
                       </button>
                     </div>
                   </div>

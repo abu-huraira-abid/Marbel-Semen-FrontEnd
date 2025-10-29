@@ -14,7 +14,7 @@ export default function RecentlyAdded() {
       try {
         const res = await axios.get(`${BASE_URL}/bulls/latest/`);
         const bullsData = res.data.data; // comes from your backend
-        console.log(bullsData);
+        // console.log(bullsData);
         setBulls(bullsData);
       } catch (err) {
         console.error("Error fetching bulls:", err);
@@ -41,7 +41,7 @@ export default function RecentlyAdded() {
       </h1>
       <div className="container mt-5" style={{ fontFamily: "Poppins" }}>
         <div className="row mx-auto">
-          {bulls.map((bull) => (
+          {bulls.slice(0,3).map((bull) => (
             <div className="col-md-4 my-3 my-lg-0 h-100" key={bull.id}>
               <div
                 className="card position-relative"

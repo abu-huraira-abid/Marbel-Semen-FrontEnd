@@ -41,7 +41,7 @@ export default function TableCards() {
   useEffect(() => {
     const fetchBulls = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/bulls/`);
+        const res = await axios.get(`${BASE_URL}/semens/`);
         const data = res.data.results?.data || res.data.results || res.data;
         setBulls(data);
         setFilteredBulls(data);
@@ -72,7 +72,7 @@ export default function TableCards() {
     if (packages[bullId]) return;
     try {
       const res = await axios.get(
-        `${BASE_URL}/bulls/${bullId}/price-packages/`
+        `${BASE_URL}/semens/${bullId}/price-packages/`
       );
       setPackages((prev) => ({ ...prev, [bullId]: res.data.results }));
     } catch (err) {
@@ -153,7 +153,7 @@ export default function TableCards() {
           Explore Our Premium Semens
         </h2>
 
-        {/* Filters Section */}
+        {/* Filters Section */} 
         <div className="filters-container mb-5 fade-up-delay">
           <div className="row g-3 align-items-end">
             <div className="col-md-4">
@@ -168,7 +168,7 @@ export default function TableCards() {
                 onChange={(e) => setSearchName(e.target.value)}
               />
             </div>
-            <div className="col-md-4">
+            {/* <div className="col-md-4">
               <label className="form-label text-light fw-semibold">
                 Search by Breed
               </label>
@@ -179,7 +179,7 @@ export default function TableCards() {
                 value={searchBreed}
                 onChange={(e) => setSearchBreed(e.target.value)}
               />
-            </div>
+            </div> */}
             <div className="col-md-4">
               <label className="form-label text-light fw-semibold">
                 Price Range (${minPrice} - ${maxPrice})
@@ -275,7 +275,7 @@ export default function TableCards() {
             })
           ) : (
             <div className="text-center text-light py-5">
-              <h5>No bulls match your search or filters 🐃</h5>
+              <h5>No semens match your search or filters</h5>
             </div>
           )}
         </div>

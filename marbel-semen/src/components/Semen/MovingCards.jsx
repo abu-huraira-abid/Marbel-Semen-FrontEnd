@@ -43,7 +43,7 @@ export default function MovingCards() {
 
   return (
     <div className="container py-5">
-      <h2 className="text-center mb-4">Semen Trending</h2>
+      <h2 className="text-center mb-4">Trending Bulls</h2>
       <div
         id="bullsCarousel"
         className="carousel slide"

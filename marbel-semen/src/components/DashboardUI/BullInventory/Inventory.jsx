@@ -25,7 +25,7 @@ export default function Inventory() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/${entityType}/1/stocks/`, {
+        const res = await axios.get(`${BASE_URL}/${entityType}/stocks/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         console.log(res.data);
