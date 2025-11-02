@@ -6,9 +6,9 @@ import LandingPage from "../src/components/LandingPage/LandingPage";
 import AboutUs from "./components/AboutUs/AboutUs";
 import ContactUs from "./components/ContactUs/ContactUs";
 import BullBattery from "./components/BullBattery/BullBattery";
-import ViewStat from "./components/ViewStat/ViewStat";
+import ViewStat from "./components/ViewStatBull/ViewStat";
 import BullCompare from "./components/BullCompare/BullCompare";
-import AddToCart from "./components/AddToCart/AddToCart";
+import AddToCart from "./components/AddToCartBull/AddToCart";
 import Account from "./components/Register/Account";
 import Dashboard from "./components/DashboardUI/Dashboard/Dashboard";
 // import BullView from "./components/DashboardUI/BullManagement/BullView";
@@ -33,6 +33,10 @@ import SemenPage from "./components/Semen/SemenPage";
 import SpecialPage from "./components/Special/SpecialPage";
 import EntityManagement from "./components/DashboardUI/BullManagement/EntityManagement";
 import DynamicPrice from "./components/DashboardUI/BullManagement/DynamicPrice";
+import ViewStatEmbryo from "./components/ViewStatEmbryo/ViewStat";
+import ViewStatSemen from "./components/ViewStatSemen/ViewStatSemen";
+import AddToCartEmbryo from "./components/AddToCartEmbryo/AddToCartEmbryo";
+import AddToCartSemen from "./components/AddToCartSemen/AddToCartSemen";
 
 export default function App() {
   return (
@@ -43,8 +47,12 @@ export default function App() {
         <Route path="/contact-us" element={<ContactUs />} />
         <Route path="/bull-battery" element={<BullBattery />} />
         <Route path="/view-stat" element={<ViewStat />} />
+        <Route path="/view-stat-embryo" element={<ViewStatEmbryo />} />
+        <Route path="/view-stat-semen" element={<ViewStatSemen />} />
         <Route path="/bull-compare" element={<BullCompare />} />
         <Route path="/add-cart" element={<AddToCart />} />
+        <Route path="/add-cart-embryo" element={<AddToCartEmbryo />} />
+        <Route path="/add-cart-semen" element={<AddToCartSemen />} />
         <Route path="/account" element={<Account />} />
         <Route path="/account/dashboard" element={<Dashboard />} />
         <Route path="/account/bulls" element={<EntityManagement />} />

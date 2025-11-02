@@ -13,7 +13,7 @@ export default function MovingCards() {
     const fetchTrendingBulls = async () => {
       try {
         const res = await axios.get(`${BASE_URL}/bulls/trending/`);
-        console.log("🐂 Trending Bulls API Response:", res.data);
+        // console.log("🐂 Trending Bulls API Response:", res.data);
         setBulls(res.data.data || []); // assuming backend wraps in {success, data}
       } catch (err) {
         console.error("❌ Error fetching trending bulls:", err);

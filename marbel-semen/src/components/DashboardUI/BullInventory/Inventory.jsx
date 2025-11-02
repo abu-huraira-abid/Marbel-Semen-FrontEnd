@@ -5,7 +5,6 @@ import Swal from "sweetalert2";
 
 export default function Inventory() {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
-
   const [entityType, setEntityType] = useState("bulls"); // bulls | semens | embryos
   const [inventory, setInventory] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -18,7 +17,6 @@ export default function Inventory() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-
   const token = localStorage.getItem("access_token");
 
   // Fetch inventory based on selected entity type
@@ -31,10 +29,7 @@ export default function Inventory() {
         console.log(res.data);
         setInventory(res.data.data || res.data.results?.data || res.data.results || []);
       } catch (error) {
-        console.error(
-          "Error loading inventory:",
-          error.response?.data || error
-        );
+        console.error("Error loading inventory:", error.response?.data || error);
         Swal.fire({
           icon: "error",
           title: `Failed to Load ${entityType}`,
@@ -42,7 +37,6 @@ export default function Inventory() {
         });
       }
     };
-
     fetchData();
   }, [BASE_URL, token, entityType]);
 
@@ -69,7 +63,7 @@ export default function Inventory() {
 
     try {
       await axios.patch(
-        `${BASE_URL}/${entityType}/${selectedItem.id}/stock/`,
+        `${BASE_URL}/${entityType}/${selectedItem.id}/stocks/`,
         { quantity: updatedQuantity },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -101,18 +95,30 @@ export default function Inventory() {
     }
   };
 
-  // Filter logic with safety checks
-  const filteredInventory = inventory.filter((item) => {
-    const matchesName = (item?.name || "")
-      .toLowerCase()
-      .includes(searchName.toLowerCase());
+  // Determine columns dynamically
+  const getColumns = () => {
+    if (entityType === "bulls") {
+      return ["Image", "Name", "Breed", "Quantity"];
+    }
+    if (entityType === "semens") {
+      return ["Bull Name", "Quantity"];
+    }
+    if (entityType === "embryos") {
+      return ["Name","Sire Name", "Dam Name", "Quantity"];
+    }
+    return [];
+  };
 
-    const matchesBreed = (item?.breed || "")
-      .toLowerCase()
-      .includes(searchBreed.toLowerCase());
+  // Filter logic
+  const filteredInventory = inventory.filter((item) => {
+    const name = item?.name || item?.bull__name || item?.sire__name || "";
+    const breed = item?.breed || item?.dam__name || "";
+    const matchesName = name.toLowerCase().includes(searchName.toLowerCase());
+    const matchesBreed = breed.toLowerCase().includes(searchBreed.toLowerCase());
 
     const quantity = item?.quantity ?? 0;
-    const status = quantity === 0 ? "danger" : quantity <= 5 ? "alert" : "success";
+    const status =
+      quantity === 0 ? "danger" : quantity <= 5 ? "alert" : "success";
     const matchesStatus = searchStatus ? status === searchStatus : true;
 
     return matchesName && matchesBreed && matchesStatus;
@@ -126,7 +132,7 @@ export default function Inventory() {
 
   return (
     <div className="container py-5">
-      {/* Entity Type Selector */}
+      {/* Header and Selector */}
       <div className="mb-3 d-flex align-items-center justify-content-between">
         <h2 className="fw-bold" style={{ fontFamily: "Syne" }}>
           {entityType === "bulls"
@@ -164,7 +170,11 @@ export default function Inventory() {
           />
           <input
             type="text"
-            placeholder="Search by Breed"
+            placeholder={
+              entityType === "embryos"
+                ? "Search by Dam Name"
+                : "Search by Breed"
+            }
             className="form-control"
             value={searchBreed}
             onChange={(e) => {
@@ -197,44 +207,90 @@ export default function Inventory() {
             <table className="table table-hover align-middle mb-0">
               <thead className="table-dark">
                 <tr>
-                  <th>Image</th>
-                  <th>Name</th>
-                  <th>Breed</th>
-                  <th>Quantity</th>
+                  {getColumns().map((col) => (
+                    <th key={col}>{col}</th>
+                  ))}
                   <th className="text-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {paginatedInventory.map((item) => (
                   <tr key={item.id}>
-                    <td>
-                      <img
-                        src={item?.image || ""}
-                        alt={item?.name || "Item"}
-                        className="rounded-2"
-                        style={{
-                          width: "80px",
-                          height: "60px",
-                          objectFit: "cover",
-                        }}
-                      />
-                    </td>
-                    <td className="fw-semibold">{item?.name || "-"}</td>
-                    <td>{item?.breed || "-"}</td>
-                    <td>
-                      <span
-                        className={`badge px-3 py-2 fs-6 rounded-0 ${
-                          item?.quantity === 0
-                            ? "bg-danger"
-                            : item?.quantity <= 5
-                            ? "bg-warning text-dark"
-                            : "bg-success"
-                        }`}
-                        style={{ width: "70px" }}
-                      >
-                        {item?.quantity ?? 0}
-                      </span>
-                    </td>
+                    {entityType === "bulls" && (
+                      <>
+                        <td>
+                          <img
+                            src={item?.image}
+                            alt={item?.name}
+                            className="rounded-2"
+                            style={{
+                              width: "80px",
+                              height: "60px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </td>
+                        <td className="fw-semibold">{item?.name}</td>
+                        <td>{item?.breed}</td>
+                        <td>
+                          <span
+                            className={`badge px-3 py-2 fs-6 rounded-0 ${
+                              item?.quantity === 0
+                                ? "bg-danger"
+                                : item?.quantity <= 5
+                                ? "bg-warning text-dark"
+                                : "bg-success"
+                            }`}
+                            style={{width:"80px"}}
+                          >
+                            {item?.quantity ?? 0}
+                          </span>
+                        </td>
+                      </>
+                    )}
+
+                    {entityType === "semens" && (
+                      <>
+                        <td className="fw-semibold">{item?.bull__name}</td>
+                        <td>
+                          <span
+                            className={`badge px-3 py-2 fs-6 rounded-0 ${
+                              item?.quantity === 0
+                                ? "bg-danger"
+                                : item?.quantity <= 5
+                                ? "bg-warning text-dark"
+                                : "bg-success"
+                            }`}
+                            style={{width:"80px"}}
+                          >
+                            {item?.quantity ?? 0}
+                          </span>
+                        </td>
+                      </>
+                    )}
+
+                    {entityType === "embryos" && (
+                      <>
+                        <td>{item?.name}</td>
+                        <td>{item?.sire__name}</td>
+                        <td>{item?.dam__name}</td>
+                        <td>
+                          <span
+                            className={`badge px-3 py-2 fs-6 rounded-0 ${
+                              item?.quantity === 0
+                                ? "bg-danger"
+                                : item?.quantity <= 5
+                                ? "bg-warning text-dark"
+                                : "bg-success"
+                            }`}
+                            style={{width:"80px"}}
+                          >
+                            {item?.quantity ?? 0}
+                          </span>
+                        </td>
+                      </>
+                    )}
+
                     <td className="text-center">
                       <button
                         className="btn btn-primary btn-sm d-flex align-items-center mx-auto rounded-1 px-4"
@@ -318,21 +374,38 @@ export default function Inventory() {
                 ></button>
               </div>
               <div className="modal-body">
-                <div className="d-flex align-items-center mb-3">
-                  <img
-                    src={selectedItem?.image || ""}
-                    alt={selectedItem?.name || "Item"}
-                    className="rounded-3 border me-3"
-                    style={{
-                      width: "100px",
-                      height: "70px",
-                      objectFit: "cover",
-                    }}
-                  />
-                  <div>
-                    <h5 className="m-0">{selectedItem?.name || "-"}</h5>
-                    <small className="text-muted">{selectedItem?.breed || "-"}</small>
-                  </div>
+                <div className="mb-3">
+                  {entityType === "bulls" && (
+                    <div className="d-flex align-items-center mb-3">
+                      <img
+                        src={selectedItem?.image}
+                        alt={selectedItem?.name}
+                        className="rounded-3 border me-3"
+                        style={{
+                          width: "100px",
+                          height: "70px",
+                          objectFit: "cover",
+                        }}
+                      />
+                      <div>
+                        <h5 className="m-0">{selectedItem?.name}</h5>
+                        <small className="text-muted">{selectedItem?.breed}</small>
+                      </div>
+                    </div>
+                  )}
+
+                  {entityType === "semens" && (
+                    <h5 className="mb-2">
+                      Bull: <span className="text-primary">{selectedItem?.bull__name}</span>
+                    </h5>
+                  )}
+
+                  {entityType === "embryos" && (
+                    <>
+                      <h6>Sire: <span className="text-primary">{selectedItem?.sire__name}</span></h6>
+                      <h6>Dam: <span className="text-primary">{selectedItem?.dam__name}</span></h6>
+                    </>
+                  )}
                 </div>
 
                 <div className="mb-3">

@@ -33,6 +33,7 @@ export default function OrderHistory() {
       const res = await axios.get(
         `${BASE_URL}/orders/by-email/?email=${email}`
       );
+      console.log(res.data)
       setOrders(res.data.data);
     } catch (err) {
       Swal.fire({
@@ -150,7 +151,7 @@ export default function OrderHistory() {
             <tbody>
               {orders.map((order) => (
                 <tr key={order.id}>
-                  <td>{order.bull_name}</td>
+                  <td>{order.product_name}</td>
                   <td>{new Date(order.created_at).toLocaleDateString()}</td>
                   <td>{order.quantity}</td>
                   <td>${order.total_price}</td>

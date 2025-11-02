@@ -274,7 +274,7 @@ export default function TableCards() {
                       <button
                         className="btn btn-outline-warning w-50 rounded-1 d-flex align-items-center justify-content-center gap-2"
                         onClick={() =>
-                          navigate("/view-stat", { state: { id: bull.id } })
+                          navigate("/view-stat-embryo", { state: { id: bull.id } })
                         }
                       >
                         <FaChartBar /> View Stats
@@ -283,7 +283,7 @@ export default function TableCards() {
                       <button
                         className="btn btn-warning text-dark w-50 rounded-1 d-flex align-items-center justify-content-center gap-2"
                         onClick={() =>
-                          navigate("/add-cart", { state: { id: bull.id } })
+                          navigate("/add-cart-embryo", { state: { id: bull.id } })
                         }
                       >
                         <FaShoppingCart /> Add to Cart

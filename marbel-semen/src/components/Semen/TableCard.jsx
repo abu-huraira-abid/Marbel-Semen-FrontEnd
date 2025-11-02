@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaChartBar, FaShoppingCart } from "react-icons/fa";
 import axios from "axios";
 import "../../assets/styles/Semen.css";
 
@@ -42,6 +43,7 @@ export default function TableCards() {
     const fetchBulls = async () => {
       try {
         const res = await axios.get(`${BASE_URL}/semens/`);
+        console.log(res);
         const data = res.data.results?.data || res.data.results || res.data;
         setBulls(data);
         setFilteredBulls(data);
@@ -87,15 +89,15 @@ export default function TableCards() {
 
     if (searchName.trim()) {
       result = result.filter((bull) =>
-        bull.name?.toLowerCase().includes(searchName.toLowerCase())
+        bull.bull_name?.toLowerCase().includes(searchName.toLowerCase())
       );
     }
 
-    if (searchBreed.trim()) {
-      result = result.filter((bull) =>
-        bull.breed?.toLowerCase().includes(searchBreed.toLowerCase())
-      );
-    }
+    // if (searchBreed.trim()) {
+    //   result = result.filter((bull) =>
+    //     bull.breed?.toLowerCase().includes(searchBreed.toLowerCase())
+    //   );
+    // }
 
     if (priceFilterActive) {
       result = result.filter((bull) => {
@@ -153,7 +155,7 @@ export default function TableCards() {
           Explore Our Premium Semens
         </h2>
 
-        {/* Filters Section */} 
+        {/* Filters Section */}
         <div className="filters-container mb-5 fade-up-delay">
           <div className="row g-3 align-items-end">
             <div className="col-md-4">
@@ -222,24 +224,53 @@ export default function TableCards() {
               return (
                 <div key={bull.id} className="col-12 col-md-6 col-lg-4">
                   <div className="elegant-card h-100 d-flex flex-column position-relative">
-                    <img
+                    {/* <img
                       src={bull.image || "https://via.placeholder.com/400"}
                       alt={bull.name}
                       className="rounded-3 card-img"
                       style={{ height: "250px", objectFit: "cover" }}
-                    />
+                    /> */}
 
                     <div className="card-body flex-grow-1 d-flex flex-column p-3">
-                      <h5 className="fw-bold text-white">{bull.name}</h5>
-                      <p className="text-warning mb-3">{bull.breed}</p>
-
-                      <ul className="package-list flex-grow-1 list-unstyled">
+                      <h5 className="text-white fw-light">
+                        Name :{" "}
+                        <span className="text-warning fw-bold">
+                          {bull.bull_name}
+                        </span>
+                      </h5>
+                      <p className="text-white mb-3">
+                        Batch No. :{" "}
+                        <span className="text-warning fw-bold">
+                          {bull.batch_number}
+                        </span>
+                      </p>
+                      <p className="text-white mb-3">
+                        Quality Grade :{" "}
+                        <span className="text-warning fw-bold">
+                          {bull.quality_grade}
+                        </span>
+                      </p>
+                      <p className="text-white mb-3">
+                        Collection Date :{" "}
+                        <span className="text-warning fw-bold">
+                          {bull.collection_date}
+                        </span>
+                      </p>
+                      <h5>Price Package:</h5>
+                      <ul className="package-list flex-grow-1">
                         {bullPackages ? (
                           bullPackages.length > 0 ? (
                             bullPackages.map((p) => (
-                              <li key={p.id} className="d-flex justify-content-between package-item">
-                                <span className="units">{p.min_units}-{p.max_units}</span>
-                                <span className="price">${p.price_per_unit}</span>
+                              <li
+                                key={p.id}
+                                className="d-flex justify-content-between package-item"
+                              >
+                                <span className="units">
+                                  {p.min_units}-{p.max_units}
+                                </span>
+                                <span className="price">
+                                  ${p.price_per_unit}
+                                </span>
                               </li>
                             ))
                           ) : (
@@ -252,20 +283,22 @@ export default function TableCards() {
 
                       <div className="d-flex gap-2 mt-3">
                         <button
-                          className="btn btn-outline-amber w-50"
+                          className="btn btn-outline-amber w-50 d-flex align-items-center justify-content-center gap-2"
                           onClick={() =>
-                            navigate("/view-stat", { state: { id: bull.id } })
+                            navigate("/view-stat-semen", { state: { id: bull.id } })
                           }
                         >
-                          View Stats
+                          <FaChartBar />
+                          <span>View Stats</span>
                         </button>
                         <button
-                          className="btn btn-amber w-50 text-dark"
+                          className="btn btn-amber w-50 text-dark d-flex align-items-center justify-content-center gap-2"
                           onClick={() =>
-                            navigate("/add-cart", { state: { id: bull.id } })
+                            navigate("/add-cart-semen", { state: { id: bull.id } })
                           }
                         >
-                          Add to Cart
+                          <FaShoppingCart />
+                          <span>Add to Cart</span>
                         </button>
                       </div>
                     </div>

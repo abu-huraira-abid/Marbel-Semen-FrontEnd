@@ -16,6 +16,7 @@ export default function BullCard({ id }) {
     const fetchBull = async () => {
       try {
         const res = await axios.get(`${BASE_URL}/bulls/${id}/`);
+        // console.log(res.data)
         setBull(res.data.data);
       } catch (err) {
         console.error("Error fetching bull:", err);
@@ -122,7 +123,13 @@ export default function BullCard({ id }) {
     if (existingIndex !== -1) {
       cart[existingIndex].qty += quantity;
     } else {
-      cart.push({ id: bull.id, qty: quantity });
+      cart.push({
+        id: bull.id,
+        qty: quantity,
+        item_type: "bull",
+        name: bull.name,
+        price_packages: bull.price_packages,
+      });
     }
 
     localStorage.setItem("cart", JSON.stringify(cart));
@@ -197,7 +204,8 @@ export default function BullCard({ id }) {
     } else if (bull.quantity > 0 && bull.quantity < 6) {
       return (
         <span className="badge bg-warning text-dark fs-6 d-inline-flex align-items-center gap-1 rounded-0 py-3 px-5">
-          <i className="bi bi-exclamation-triangle"></i> Limited Stock ({bull.quantity})
+          <i className="bi bi-exclamation-triangle"></i> Limited Stock (
+          {bull.quantity})
         </span>
       );
     } else {
@@ -218,12 +226,19 @@ export default function BullCard({ id }) {
   }
 
   return (
-    <div className="container-fluid bg-light py-5" style={{ fontFamily: "Poppins" }}>
+    <div
+      className="container-fluid bg-light py-5"
+      style={{ fontFamily: "Poppins" }}
+    >
       <div className="container">
         <div className="row">
           {/* Image */}
           <div className="col-12 col-lg-6">
-            <img src={bull.image} alt={bull.name} className="img-fluid rounded-3" />
+            <img
+              src={bull.image}
+              alt={bull.name}
+              className="img-fluid rounded-3"
+            />
           </div>
 
           {/* Details */}
@@ -253,7 +268,9 @@ export default function BullCard({ id }) {
               )}
             </div>
 
-            <div className="my-2 fs-5 text-danger">REG # {bull.registration_id}</div>
+            <div className="my-2 fs-5 text-danger">
+              REG # {bull.registration_id}
+            </div>
             <div className="my-2">{renderStockBadge()}</div>
 
             {/* Quantity + Buttons */}
@@ -271,7 +288,9 @@ export default function BullCard({ id }) {
                     setError("");
                   }
                 }}
-                className={`form-control text-center w-25 py-2 ${error ? "is-invalid" : ""}`}
+                className={`form-control text-center w-25 py-2 ${
+                  error ? "is-invalid" : ""
+                }`}
               />
               <button
                 className="btn btn-success rounded-1"

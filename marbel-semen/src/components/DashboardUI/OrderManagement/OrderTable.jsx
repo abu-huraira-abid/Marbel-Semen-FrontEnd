@@ -31,7 +31,7 @@ export default function OrderTable() {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${BASE_URL}/bulls/1/orders/`, {
+      const res = await axios.get(`${BASE_URL}/orders/`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
       });
 
@@ -60,7 +60,7 @@ export default function OrderTable() {
     if (!confirm.isConfirmed) return;
 
     try {
-      await axios.delete(`${BASE_URL}/bulls/orders/${orderId}/`, {
+      await axios.delete(`${BASE_URL}/orders/${orderId}/`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
       });
 

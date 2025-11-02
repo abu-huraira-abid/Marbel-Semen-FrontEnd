@@ -29,7 +29,7 @@ export default function EntityTable({ type = "bull", value }) {
     setLoading(true);
     try {
       const res = await API.get(`/${pluralType}/`);
-      console.log(res.data)
+      console.log(res.data);
       const data = res.data?.results?.data || res.data?.results || res.data || [];
       setRecords(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -125,7 +125,6 @@ export default function EntityTable({ type = "bull", value }) {
         return (
           <tr>
             <th><input type="checkbox" /></th>
-            {/* <th>Image</th> */}
             <th>Batch</th>
             <th>Bull</th>
             <th>Batch No.</th>
@@ -213,7 +212,6 @@ export default function EntityTable({ type = "bull", value }) {
         return (
           <tr key={item.id}>
             <td><input type="checkbox" /></td>
-            {/* <td><img src={item.image} alt={item.batch_number} width="80" className="rounded shadow-sm" /></td> */}
             <td>{item.batch_number || "—"}</td>
             <td>{item.bull_name || "—"}</td>
             <td>{item.batch_number || "—"}</td>
@@ -310,6 +308,57 @@ export default function EntityTable({ type = "bull", value }) {
           <tbody>{renderTableRows()}</tbody>
         </table>
       </div>
+
+      {/* 📄 Enhanced Pagination UI */}
+      {filteredRecords.length > 0 && (
+        <div className="d-flex flex-wrap justify-content-between align-items-center mt-3 gap-3">
+          {/* Showing range info */}
+          <div className="text-muted small">
+            Showing <strong>{indexOfFirst + 1}</strong>–
+            <strong>{Math.min(indexOfLast, filteredRecords.length)}</strong> of{" "}
+            <strong>{filteredRecords.length}</strong> results
+          </div>
+
+          {/* Select items per page */}
+          <div className="d-flex align-items-center gap-2">
+            <label className="text-muted small mb-0">Rows per page:</label>
+            <select
+              className="form-select form-select-sm w-auto"
+              value={itemsPerPage}
+              onChange={(e) => {
+                setItemsPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={50}>50</option>
+            </select>
+          </div>
+
+          {/* Page navigation */}
+          <div className="d-flex align-items-center gap-2">
+            <button
+              className="btn btn-sm btn-outline-primary"
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            >
+              <FaChevronLeft /> Prev
+            </button>
+            <span className="small fw-semibold">
+              Page {currentPage} of {totalPages || 1}
+            </span>
+            <button
+              className="btn btn-sm btn-outline-primary"
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+            >
+              Next <FaChevronRight />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

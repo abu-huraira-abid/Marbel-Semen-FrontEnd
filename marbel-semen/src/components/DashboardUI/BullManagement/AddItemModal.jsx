@@ -88,7 +88,7 @@ export default function AddItemModal({ show, onClose, onSave, type = "bull" }) {
       { name: "code", label: "Code", type: "text", required: true },
       { name: "batch_number", label: "Batch Number", type: "text" },
       { name: "collection_date", label: "Collection Date", type: "date" },
-      { name: "quantity", label: "Quantity", type: "number" },
+      // { name: "quantity", label: "Quantity", type: "number" },
       {
         name: "availability",
         label: "Availability",
@@ -132,6 +132,12 @@ export default function AddItemModal({ show, onClose, onSave, type = "bull" }) {
       const empty = {};
       (fieldConfig[type] || []).forEach((f) => (empty[f.name] = ""));
       empty.image = null;
+
+      // ✅ Automatically set quantity = 0 for semen
+      if (type === "semen") {
+        empty.quantity = 0;
+      }
+
       setNewItem(empty);
       setPreview(null);
     }

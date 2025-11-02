@@ -51,7 +51,7 @@ export default function OrderReceipt({ show, handleClose, order, forceReducer })
     try {
       setLoading(true);
       await axios.patch(
-        `${BASE_URL}/bulls/orders/${order.id}/`,
+        `${BASE_URL}/orders/${order.id}/`,
         { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );
